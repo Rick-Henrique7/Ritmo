@@ -54,5 +54,6 @@ Os dois foram resolvidos em seguida, na branch `fix/publicacao-android`: o ID
 passou a ser `com.aevumtech.dailyflow` e a DM Sans foi embutida, com a remoção
 do `google_fonts`.
 
-Situação: **25 de 38** requisitos funcionais completos, 6 parciais e 7 no
-backlog.
+Situação ao fim da etapa: **25 de 38** requisitos funcionais completos, 6
+parciais e 7 no backlog. Depois, o uso real gerou o RF-TD-09 (tarefas
+atrasadas e virada do dia).

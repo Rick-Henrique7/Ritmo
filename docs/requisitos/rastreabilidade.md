@@ -26,6 +26,7 @@ Caminhos relativos a `gestao_pessoal/`. Testes: **U** = unitário,
 | RF-TD-03 | `TaskSchedule.filter` · `TaskFilterTabs` | U `task_schedule_test` (filter) · W `app_test` "abas filtram" | 04 | ✅ |
 | RF-TD-04 | `TasksScreen` (`Dismissible`) · `showConfirmDeleteDialog` · `AppUndoSnackBar` | M | 04 | ✅ |
 | RF-TD-06 | `TaskModel.isCompletedOn` · `completedDates` · `TasksNotifier.toggleCompleted` | U `task_model_test` (migração), `tasks_controller_test`, `task_schedule_test` | 04 | ✅ |
+| RF-TD-09 | `TaskSchedule.isOverdue` · `forDay` · `filter` · `OverdueTag` · `todayProvider` · `DayRollover` | U `task_schedule_test` (isOverdue, forDay, Hoje) · W `app_test` "tarefa atrasada", `day_rollover_test` | 01, 04 | ✅ |
 | RF-TD-07 | `TaskModel` · `TaskTile` · `TaskSchedule.pendingCount` | U `task_schedule_test` (pendingCount) | 04 | ✅ |
 | RF-PO-01 | `PomodoroCycle.durationOf` · `PomodoroTimerState.idle` | U `pomodoro_controller_test` "começa parado em Foco" | 05 | ✅ |
 | RF-PO-02 | `PomodoroCycle.nextAfterCompletion` · `PomodoroTimerNotifier._complete` | U `pomodoro_cycle_test`, `pomodoro_controller_test` "quarto foco" | 05 | ✅ |

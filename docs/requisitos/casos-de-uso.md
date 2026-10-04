@@ -88,7 +88,7 @@ e Estatísticas.
 | | |
 | --- | --- |
 | **Objetivo** | Ter uma tarefa que volta nos dias certos, sem recriá-la |
-| **Requisitos** | RF-TD-01, RF-TD-03, RF-TD-06, RF-TD-07 |
+| **Requisitos** | RF-TD-01, RF-TD-03, RF-TD-06, RF-TD-07, RF-TD-09 |
 
 **Fluxo principal**
 1. Em Tarefas, o usuário toca em **+**, dá um título e marca os dias de
@@ -99,7 +99,8 @@ e Estatísticas.
 
 **Fluxos alternativos**
 - *1a. Tarefa pontual:* sem dias de repetição, a tarefa vale para a data
-  escolhida; se a data passar sem conclusão, fica em "Próximas" como atrasada.
+  escolhida; se a data passar sem conclusão, continua em "Hoje" com a marca
+  **Atrasada** até ser feita. Depois de concluída, some no dia seguinte.
 - *Excluir:* deslizar avisa que todas as ocorrências serão excluídas.
 
 ---

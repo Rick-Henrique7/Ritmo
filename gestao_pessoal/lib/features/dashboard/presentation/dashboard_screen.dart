@@ -13,6 +13,7 @@ import '../../habits/domain/habit_model.dart';
 import '../../tasks/data/tasks_controller.dart';
 import '../../tasks/domain/subtask_model.dart';
 import '../../tasks/domain/task_model.dart';
+import '../../tasks/presentation/widgets/overdue_tag.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -101,6 +102,7 @@ class DashboardScreen extends ConsumerWidget {
                         _TaskRow(
                           task: todayTasks[i],
                           done: TaskSchedule.isDoneOn(todayTasks[i], today),
+                          overdue: TaskSchedule.isOverdue(todayTasks[i], today),
                           accent: accent,
                           showDivider: habitsToday.isNotEmpty || i > 0,
                           onToggle: () => ref
@@ -342,11 +344,13 @@ class _RadarRow extends StatelessWidget {
     required this.accent,
     required this.showDivider,
     required this.onToggle,
+    this.badge,
   });
 
   final Widget leading;
   final String title;
   final String? subtitle;
+  final Widget? badge;
   final bool done;
   final Color accent;
   final bool showDivider;
@@ -372,13 +376,23 @@ class _RadarRow extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        title,
-                        style: t.bodyLarge?.copyWith(
-                          color: done ? context.palette.onPanelMuted : context.palette.onPanel,
-                          decoration: done ? TextDecoration.lineThrough : null,
-                          decorationColor: context.palette.onPanelMuted,
-                        ),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              title,
+                              style: t.bodyLarge?.copyWith(
+                                color: done ? context.palette.onPanelMuted : context.palette.onPanel,
+                                decoration: done ? TextDecoration.lineThrough : null,
+                                decorationColor: context.palette.onPanelMuted,
+                              ),
+                            ),
+                          ),
+                          if (badge != null) ...[
+                            const SizedBox(width: 8),
+                            badge!,
+                          ],
+                        ],
                       ),
                       if (subtitle != null && subtitle!.isNotEmpty)
                         Text(
@@ -440,6 +454,7 @@ class _TaskRow extends StatelessWidget {
   const _TaskRow({
     required this.task,
     required this.done,
+    required this.overdue,
     required this.accent,
     required this.showDivider,
     required this.onToggle,
@@ -447,6 +462,7 @@ class _TaskRow extends StatelessWidget {
 
   final TaskModel task;
   final bool done;
+  final bool overdue;
   final Color accent;
   final bool showDivider;
   final VoidCallback onToggle;
@@ -473,6 +489,7 @@ class _TaskRow extends StatelessWidget {
       ),
       title: task.title,
       subtitle: 'Tarefa · ${task.category} · ${task.priority.label.toLowerCase()}',
+      badge: overdue ? OverdueTag(color: accent) : null,
       done: done,
       accent: accent,
       showDivider: showDivider,

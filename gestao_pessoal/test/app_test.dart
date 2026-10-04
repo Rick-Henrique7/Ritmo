@@ -69,6 +69,27 @@ void main() {
     expect(find.text('Criar hábito'), findsOneWidget);
   });
 
+  testWidgets('Hoje: tarefa atrasada continua na lista com a marca',
+      (tester) async {
+    await pumpApp(
+      tester,
+      tasks: InMemoryTasksRepository([
+        task(id: 'atrasada', title: 'Visitar a avó', dueDate: mon),
+        task(
+          id: 'ontem',
+          title: 'Feita ontem',
+          dueDate: wed,
+          isCompleted: true,
+          completedAt: wed,
+        ),
+      ]),
+    );
+
+    expect(find.text('Visitar a avó'), findsOneWidget);
+    expect(find.text('Atrasada'), findsOneWidget);
+    expect(find.text('Feita ontem'), findsNothing);
+  });
+
   testWidgets('Tarefas: abas filtram pela regra do domínio', (tester) async {
     await pumpApp(
       tester,

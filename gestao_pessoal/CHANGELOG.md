@@ -8,6 +8,9 @@ e este projeto segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [Não lançado]
 
 ### Corrigido
+- Tarefas concluídas no dia anterior continuavam na tela Hoje: o "hoje" do app
+  dependia de um timer até a meia-noite que atrasa com o celular dormindo.
+  Agora a data é conferida a cada minuto e ao voltar do segundo plano.
 - Tarefa recorrente ficava concluída para sempre; agora a conclusão é por dia
   e ela volta a ficar pendente na próxima ocorrência (dados antigos migrados).
 - Tarefas não contavam em "Feitos hoje" e a tela Hoje divergia da aba Hoje.
@@ -23,6 +26,10 @@ e este projeto segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
 ### Adicionado
 - Tela fica acesa enquanto o timer de foco está rodando.
+- Tarefa pontual não feita continua em Hoje nos dias seguintes, com a marca
+  "Atrasada", até ser concluída. A aba Próximas passa a mostrar só datas
+  futuras. Concluídas somem no dia seguinte (o histórico é mantido para as
+  Estatísticas).
 
 ### Alterado
 - `applicationId` definitivo para a Play Store: `com.aevumtech.dailyflow`.

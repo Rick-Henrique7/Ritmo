@@ -28,11 +28,37 @@ abstract final class TaskSchedule {
   /// Feita no [day]? (recorrente: conclusão naquele dia; pontual: concluída)
   static bool isDoneOn(TaskModel t, DateTime day) => t.isCompletedOn(day);
 
-  /// Tarefas do dia [day] — pendentes **e** as já feitas naquele dia.
-  /// Alimenta o painel "Hoje no radar" e o progresso "Feitos hoje".
+  /// Pontual com data **anterior** a [day] e ainda não concluída.
+  ///
+  /// Tarefa atrasada não some: continua em "Hoje" (com a marca "Atrasada")
+  /// até ser feita, porque pode ser algo importante a lembrar. Recorrentes
+  /// nunca ficam atrasadas — cada dia previsto é uma ocorrência nova.
+  static bool isOverdue(TaskModel t, DateTime day) {
+    final due = t.dueDate;
+    return !t.isRepeating &&
+        !t.isCompleted &&
+        due != null &&
+        dateOnly(due).isBefore(dateOnly(day));
+  }
+
+  /// Tarefas do dia [day] — pendentes, atrasadas **e** as já feitas naquele
+  /// dia. Alimenta o painel "Hoje no radar" e o progresso "Feitos hoje".
+  ///
+  /// Concluída num dia anterior não aparece: o dia seguinte começa limpo.
   static List<TaskModel> forDay(List<TaskModel> tasks, DateTime day) {
     return tasks.where((t) {
-      if (!isScheduledFor(t, day)) return false;
+      if (isOverdue(t, day)) return true;
+      if (!isScheduledFor(t, day)) {
+        // Atrasada concluída hoje continua visível (e contando) até o fim do dia.
+        final at = t.completedAt;
+        final due = t.dueDate;
+        return !t.isRepeating &&
+            t.isCompleted &&
+            due != null &&
+            dateOnly(due).isBefore(dateOnly(day)) &&
+            at != null &&
+            isSameDay(at, day);
+      }
       if (t.isRepeating || !t.isCompleted) return true;
       // Pontual concluída: só aparece se era daquele dia ou foi feita nele.
       final due = t.dueDate;
@@ -57,9 +83,9 @@ abstract final class TaskSchedule {
   ///
   /// - **Todas**: pontuais abertas (inclusive atrasadas), pontuais
   ///   concluídas de hoje em diante e todas as recorrentes.
-  /// - **Hoje**: do dia e ainda não feitas.
-  /// - **Próximas**: abertas que não são de hoje (futuras e atrasadas;
-  ///   recorrentes fora do dia).
+  /// - **Hoje**: do dia e ainda não feitas, mais as **atrasadas**.
+  /// - **Próximas**: abertas com data futura e recorrentes fora do dia.
+  ///   (Atrasadas ficam em Hoje, não aqui.)
   /// - **Concluídas**: pontuais concluídas + recorrentes feitas hoje,
   ///   mais recentes primeiro.
   static List<TaskModel> filter(
@@ -81,14 +107,18 @@ abstract final class TaskSchedule {
 
       case TaskFilter.today:
         return tasks
-            .where((t) => isScheduledFor(t, day) && !isDoneOn(t, day))
+            .where((t) =>
+                isOverdue(t, day) ||
+                (isScheduledFor(t, day) && !isDoneOn(t, day)))
             .toList()
           ..sort(compareBySchedule);
 
       case TaskFilter.upcoming:
         return tasks
             .where((t) =>
-                !isScheduledFor(t, day) && (t.isRepeating || !t.isCompleted))
+                !isScheduledFor(t, day) &&
+                !isOverdue(t, day) &&
+                (t.isRepeating || !t.isCompleted))
             .toList()
           ..sort(compareBySchedule);
 

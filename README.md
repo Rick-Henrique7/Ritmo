@@ -9,7 +9,7 @@
 [![CI](https://github.com/Rick-Henrique7/Daily-Flow/actions/workflows/ci.yml/badge.svg)](https://github.com/Rick-Henrique7/Daily-Flow/actions/workflows/ci.yml)
 ![Flutter](https://img.shields.io/badge/Flutter-3-02569B?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.11-0175C2?logo=dart&logoColor=white)
-![Testes](https://img.shields.io/badge/testes-55-4F8A83)
+![Testes](https://img.shields.io/badge/testes-64-4F8A83)
 ![Licença](https://img.shields.io/badge/licença-Apache_2.0-D9A441)
 
 [O app](#o-app) · [Engenharia](#engenharia) · [Como rodar](#como-rodar) · [Documentação](docs/README.md)
@@ -28,7 +28,8 @@ aparelho: nenhum cadastro, nenhum dado enviado para fora.
 - **Hábitos:** calendário mensal, frequência por dia da semana, sequência
   calculada e dias perdidos em destaque.
 - **Tarefas:** pontuais ou recorrentes (a recorrente volta pendente no
-  próximo dia previsto), prioridade e abas Todas / Hoje / Próximas /
+  próximo dia previsto), tarefa atrasada continua visível até ser feita,
+  prioridade e abas Todas / Hoje / Próximas /
   Concluídas.
 - **Foco:** Pomodoro 25 / 5 / 15 com ciclo automático. O tempo segue certo
   mesmo com o app minimizado, e a tela fica acesa enquanto roda.
@@ -59,10 +60,10 @@ guiada por SOLID e Clean Code.
 | **Arquitetura** | Por feature, com camadas `presentation` → `data` → `domain`. `core/` não depende de nenhuma feature, e o CI verifica essa regra. [Detalhes](docs/arquitetura.md) |
 | **Domínio puro** | Regras como "o que é de hoje", sequência de hábitos, estatísticas e ciclo do foco são funções puras, sem Flutter e sem I/O. [ADR 0004](docs/adr/0004-regras-de-dominio-puras.md) |
 | **Inversão de dependência** | Controllers dependem de interfaces de repositório. Armazenamento, relógio, som e vibração são injetados pelo Riverpod e trocados por fakes nos testes. |
-| **Testes** | 55 testes automatizados (51 unitários + 4 de widget do app real), com data e relógio fixos. Cada bug corrigido tem um teste de regressão. [Estratégia](docs/qualidade/testes.md) |
+| **Testes** | 64 testes automatizados (58 unitários + 6 de widget), com data e relógio fixos. Cada bug corrigido tem um teste de regressão. [Estratégia](docs/qualidade/testes.md) |
 | **CI** | GitHub Actions a cada push e PR: análise estática, regras de arquitetura e testes com cobertura. |
 | **Decisões registradas** | 8 [ADRs](docs/adr/README.md): repositórios, paleta como `ThemeExtension`, timer pelo horário de término e outras. |
-| **Requisitos** | 38 funcionais e 10 não funcionais, com critérios de aceite, [casos de uso](docs/requisitos/casos-de-uso.md) e [matriz de rastreabilidade](docs/requisitos/rastreabilidade.md) até o teste. |
+| **Requisitos** | 39 funcionais e 10 não funcionais, com critérios de aceite, [casos de uso](docs/requisitos/casos-de-uso.md) e [matriz de rastreabilidade](docs/requisitos/rastreabilidade.md) até o teste. |
 | **Processo** | Branches por etapa, Conventional Commits, SemVer, CHANGELOG e critérios de pronto. [Ciclo de vida](docs/processo/ciclo-de-vida.md) |
 
 Um exemplo do que a refatoração resolveu: o timer de foco atrasava quando o
@@ -86,7 +87,7 @@ Pré-requisitos: [Flutter](https://docs.flutter.dev/get-started/install) 3
 git clone https://github.com/Rick-Henrique7/Daily-Flow.git
 cd Daily-Flow/gestao_pessoal
 flutter pub get
-flutter test        # 55 testes
+flutter test        # 64 testes
 flutter run         # com um aparelho ou emulador conectado
 ```
 

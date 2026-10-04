@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../database/prefs_store.dart';
+import '../utils/date_only.dart';
 import '../services/haptics_service.dart';
 import '../services/sound_service.dart';
 import '../services/wakelock_service.dart';
@@ -64,15 +65,23 @@ typedef Clock = DateTime Function();
 
 final clockProvider = Provider<Clock>((ref) => DateTime.now);
 
-/// Data de hoje (sem hora), recalculada automaticamente à meia-noite.
+/// Data de hoje (sem hora), atualizada quando o dia vira.
 ///
 /// Todas as regras que dependem de "hoje" leem daqui. Isso dá uma chave
 /// estável para os providers (antes `DateTime.now()` com segundos virava
 /// chave nova a cada build) e permite fixar a data nos testes.
+///
+/// A virada é detectada comparando com o relógio a cada minuto, e também
+/// ao voltar do segundo plano (`DayRollover`). Antes era um único `Timer`
+/// agendado para a meia-noite: com o celular dormindo, esse timer atrasava
+/// (o relógio dele para durante o sono do aparelho) e o app amanhecia
+/// mostrando o dia anterior, com as tarefas de ontem ainda na tela.
 final todayProvider = Provider<DateTime>((ref) {
-  final now = DateTime.now();
-  final tomorrow = DateTime(now.year, now.month, now.day + 1);
-  final timer = Timer(tomorrow.difference(now), ref.invalidateSelf);
+  final clock = ref.watch(clockProvider);
+  final today = dateOnly(clock());
+  final timer = Timer.periodic(const Duration(minutes: 1), (_) {
+    if (!isSameDay(clock(), today)) ref.invalidateSelf();
+  });
   ref.onDispose(timer.cancel);
-  return DateTime(now.year, now.month, now.day);
+  return today;
 });

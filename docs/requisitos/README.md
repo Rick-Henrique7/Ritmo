@@ -6,7 +6,7 @@
 
 | Documento | Conteúdo |
 | --- | --- |
-| [Requisitos funcionais](funcionais.md) | 38 requisitos em 6 áreas, com critérios Dado / Quando / Então |
+| [Requisitos funcionais](funcionais.md) | 39 requisitos em 6 áreas, com critérios Dado / Quando / Então |
 | [Requisitos não funcionais](nao-funcionais.md) | Privacidade, offline, desempenho, acessibilidade, manutenção |
 | [Casos de uso](casos-de-uso.md) | 7 fluxos do dia a dia, com caminhos alternativos |
 | [Rastreabilidade](rastreabilidade.md) | Requisito → código → teste → caso de uso, e lacunas de teste |
@@ -44,7 +44,7 @@ Situação atual (v0.1, etapa 4):
 
 | | ✅ | 🟡 | ⬜ | Total |
 | --- | --- | --- | --- | --- |
-| Funcionais | 25 | 6 | 7 | 38 |
+| Funcionais | 26 | 6 | 7 | 39 |
 | Não funcionais | 7 | 3 | 0 | 10 |
 
 ## 3. Backlog

@@ -120,6 +120,7 @@ Afazeres pontuais (com data) ou recorrentes (em dias da semana).
 | RF-TD-06 | Tarefa recorrente com conclusão **por dia** | Must | ✅ |
 | RF-TD-07 | Prioridade, categoria, data e hora | Must | ✅ |
 | RF-TD-08 | Filtros por categoria e prioridade, e busca | Could | ⬜ |
+| RF-TD-09 | Tarefa atrasada continua em Hoje, marcada, até ser feita; concluída some no dia seguinte | Must | ✅ |
 
 **RF-TD-01 — Gerenciar tarefas** 🟡
 - ✅ Quando crio uma tarefa, informo título, prioridade, categoria, data, hora
@@ -136,10 +137,9 @@ Afazeres pontuais (com data) ou recorrentes (em dias da semana).
 
 **RF-TD-03 — Abas**
 - **Hoje:** tarefas do dia ainda não feitas: pontuais com data de hoje,
-  recorrentes previstas para o dia da semana e avulsas (sem data e sem
-  repetição).
-- **Próximas:** abertas que não são de hoje: futuras e atrasadas, em ordem de
-  data.
+  recorrentes previstas para o dia da semana, avulsas (sem data e sem
+  repetição) e **atrasadas** (RF-TD-09).
+- **Próximas:** abertas com data futura, em ordem de data.
 - **Concluídas:** pontuais concluídas e recorrentes feitas hoje, mais
   recentes primeiro.
 - **Todas:** abertas (inclusive atrasadas), recorrentes e concluídas de hoje
@@ -162,6 +162,19 @@ Afazeres pontuais (com data) ou recorrentes (em dias da semana).
 - Desmarcar remove só a conclusão daquele dia.
 - Tarefas recorrentes salvas no formato antigo (um único "concluída") são
   migradas sem perder dados.
+
+**RF-TD-09 — Atrasadas e virada do dia**
+- Dado uma tarefa do dia 10 não feita, quando chega o dia 11, então ela
+  continua em "Hoje" (aba e tela inicial) com a marca **Atrasada**, até ser
+  concluída.
+- Dado uma tarefa do dia 10 concluída, quando chega o dia 11, então ela não
+  aparece mais em "Hoje"; fica só em "Concluídas" e nas Estatísticas.
+- Uma tarefa com data futura só entra em "Hoje" no próprio dia; antes disso,
+  fica em "Próximas".
+- Recorrentes nunca ficam atrasadas: o dia perdido não passa para o seguinte.
+- A virada é percebida ao voltar o app do segundo plano, sem precisar
+  fechá-lo.
+- Nada é apagado: o histórico de concluídas alimenta as Estatísticas.
 
 **RF-TD-07 — Atributos**
 - A prioridade (baixa, média, alta) aparece como uma barra colorida no

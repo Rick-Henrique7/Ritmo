@@ -8,6 +8,7 @@ import '../../../../core/widgets/liquid_glass_card.dart';
 import '../../data/tasks_controller.dart';
 import '../../domain/subtask_model.dart';
 import '../../domain/task_model.dart';
+import 'overdue_tag.dart';
 
 /// Cartão de tarefa com tap para editar + check para concluir.
 class TaskTile extends ConsumerWidget {
@@ -20,7 +21,9 @@ class TaskTile extends ConsumerWidget {
     final dueLine = _dueLine(task);
     final accent = context.accent;
     // Recorrente: "feita" vale para hoje; pontual: concluída de vez.
-    final done = TaskSchedule.isDoneOn(task, ref.watch(todayProvider));
+    final today = ref.watch(todayProvider);
+    final done = TaskSchedule.isDoneOn(task, today);
+    final overdue = TaskSchedule.isOverdue(task, today);
     // Mapeia prioridade para a cor — high usa accent (customizado),
     // medium usa accent escurecido, low fica muted gray.
     final Color priorityColor = switch (task.priority) {
@@ -64,6 +67,10 @@ class TaskTile extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  if (overdue) ...[
+                    const SizedBox(width: 6),
+                    const OverdueTag(),
+                  ],
                   IconButton(
                     tooltip: done ? 'Reabrir' : 'Concluir',
                     icon: Icon(

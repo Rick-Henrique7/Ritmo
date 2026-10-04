@@ -10,8 +10,8 @@
 
 | Nível | O que cobre | Velocidade | Hoje | Meta |
 | --- | --- | --- | --- | --- |
-| **Unitário** | Regras puras do domínio, modelos (JSON e migração), controllers com repositório em memória e relógio falso | milissegundos | 51 | toda regra nova e todo bug corrigido |
-| **Widget** | App real (rotas, shell, tema, telas) com armazenamento em memória e data fixa | rápido | 4 | fluxos principais de cada tela |
+| **Unitário** | Regras puras do domínio, modelos (JSON e migração), controllers com repositório em memória e relógio falso | milissegundos | 58 | toda regra nova e todo bug corrigido |
+| **Widget** | App real (rotas, shell, tema, telas) com armazenamento em memória e data fixa | rápido | 6 | fluxos principais de cada tela |
 | **Integração / E2E** | Fluxos completos no aparelho ou emulador (`integration_test`) | lento | 0 | antes da primeira versão na Play Store |
 
 A base larga é intencional: as regras foram extraídas para funções puras
@@ -22,7 +22,7 @@ testadas sem montar interface.
 
 | Arquivo | Testes | Protege |
 | --- | --- | --- |
-| `test/features/tasks/task_schedule_test.dart` | 12 | "é de hoje", conteúdo de cada aba, painel Hoje, contador de pendentes |
+| `test/features/tasks/task_schedule_test.dart` | 19 | "é de hoje", tarefas atrasadas, conteúdo de cada aba, painel Hoje, contador de pendentes |
 | `test/features/tasks/task_model_test.dart` | 3 | JSON ida e volta; **migração** de recorrentes antigas |
 | `test/features/tasks/tasks_controller_test.dart` | 4 | Concluir/desfazer recorrente por dia, persistência via repositório |
 | `test/features/habits/habit_rules_test.dart` | 9 | Sequência (dias previstos, quebra, hoje em aberto), dias incompletos |
@@ -30,9 +30,10 @@ testadas sem montar interface.
 | `test/features/pomodoro/pomodoro_cycle_test.dart` | 6 | Próximo modo (pausa longa no 4º foco), "pular", tempo restante arredondado |
 | `test/features/pomodoro/pomodoro_controller_test.dart` | 10 | Timer pelo horário de término: segundo plano, pausa, conclusão única, sessão gravada, som, tela acesa |
 | `test/core/json_coders_test.dart` | 3 | Registros corrompidos não derrubam o app |
-| `test/app_test.dart` | 4 | Tela Hoje (progresso e concluir), estado vazio, abas de Tarefas, estilos em Configurações |
+| `test/app_test.dart` | 5 | Tela Hoje (progresso e concluir, tarefa atrasada), estado vazio, abas de Tarefas, estilos em Configurações |
+| `test/shell/day_rollover_test.dart` | 1 | Virada do dia ao voltar do segundo plano |
 
-**Total: 55 testes** (51 unitários + 4 de widget).
+**Total: 64 testes** (58 unitários + 6 de widget).
 
 **Testes de regressão:** cada bug corrigido na etapa 1 tem um teste com o
 cenário que falhava — por exemplo `gráfico anual soma o mês inteiro (bug
