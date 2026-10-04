@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Android 11 e anteriores: tela de abertura creme, igual ao fundo do app. -->
+    <!-- Android 12+: o sistema sempre mostra o ícone no centro ao abrir.
+         Fundo creme e só o desenho da Órbita (sem a moldura do ícone),
+         para a abertura parecer parte do app. -->
     <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowSplashScreenBackground">@color/splash_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>
-    <!-- Cor da janela por trás do Flutter enquanto ele inicia. -->
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">@color/splash_background</item>
     </style>
