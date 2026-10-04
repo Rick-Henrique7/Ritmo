@@ -6,6 +6,8 @@
 
 **Hábitos, tarefas e foco em um app só — offline, sem conta, sem anúncios.**
 
+*Android · em preparação para a Play Store*
+
 [![CI](https://github.com/Rick-Henrique7/Ritmo/actions/workflows/ci.yml/badge.svg)](https://github.com/Rick-Henrique7/Ritmo/actions/workflows/ci.yml)
 ![Flutter](https://img.shields.io/badge/Flutter-3-02569B?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.11-0175C2?logo=dart&logoColor=white)
@@ -28,16 +30,16 @@ aparelho: nenhum cadastro, nenhum dado enviado para fora.
 - **Hábitos:** calendário mensal, frequência por dia da semana, sequência
   calculada e dias perdidos em destaque.
 - **Tarefas:** pontuais ou recorrentes (a recorrente volta pendente no
-  próximo dia previsto), tarefa atrasada continua visível até ser feita,
-  prioridade e abas Todas / Hoje / Próximas /
-  Concluídas.
+  próximo dia previsto), prioridade e abas Todas / Hoje / Próximas /
+  Concluídas. A tarefa não feita continua em Hoje com a marca "Atrasada";
+  a concluída sai da tela no dia seguinte.
 - **Foco:** Pomodoro 25 / 5 / 15 com ciclo automático. O tempo segue certo
   mesmo com o app minimizado, e a tela fica acesa enquanto roda.
 - **Estatísticas:** tarefas concluídas, minutos de foco, gráfico por
   semana / mês / ano e mapa de 8 semanas de hábitos.
 - **Avisos:** resumo da manhã, pendências da noite, horário de tarefas e
-  hábitos, com **Concluir** e **Adiar 1 h** na própria notificação. Tudo
-  agendado no aparelho.
+  hábitos e fim do foco, com **Concluir** e **Adiar 1 h** na própria
+  notificação. Tudo agendado no aparelho, sem servidor.
 - **Dois estilos:** *Editorial* (papel creme, tinta grafite, coral) e
   *Liquid Glass* (vidro translúcido), com cores personalizáveis.
 
@@ -65,7 +67,7 @@ guiada por SOLID e Clean Code.
 | **Inversão de dependência** | Controllers dependem de interfaces de repositório. Armazenamento, relógio, som e vibração são injetados pelo Riverpod e trocados por fakes nos testes. |
 | **Testes** | 86 testes automatizados (80 unitários + 6 de widget), com data e relógio fixos. Cada bug corrigido tem um teste de regressão. [Estratégia](docs/qualidade/testes.md) |
 | **CI** | GitHub Actions a cada push e PR: análise estática, regras de arquitetura e testes com cobertura. |
-| **Decisões registradas** | 8 [ADRs](docs/adr/README.md): repositórios, paleta como `ThemeExtension`, timer pelo horário de término e outras. |
+| **Decisões registradas** | 9 [ADRs](docs/adr/README.md): repositórios, paleta como `ThemeExtension`, timer pelo horário de término, notificações locais e outras. |
 | **Requisitos** | 47 funcionais e 10 não funcionais, com critérios de aceite, [casos de uso](docs/requisitos/casos-de-uso.md) e [matriz de rastreabilidade](docs/requisitos/rastreabilidade.md) até o teste. |
 | **Processo** | Branches por etapa, Conventional Commits, SemVer, CHANGELOG e critérios de pronto. [Ciclo de vida](docs/processo/ciclo-de-vida.md) |
 
@@ -75,11 +77,16 @@ e calcula o restante pelo relógio, e um teste com relógio falso prova isso
 sem esperar 25 minutos
 ([ADR 0007](docs/adr/0007-timer-pelo-horario-de-termino.md)).
 
+Outro: as notificações nunca falam de algo já feito. Uma função pura calcula
+os avisos dos próximos 7 dias a partir do estado, e o app reagenda tudo a cada
+mudança, inclusive quando o usuário conclui pela própria notificação, que roda
+num isolate separado ([ADR 0009](docs/adr/0009-notificacoes-locais.md)).
+
 ### Stack
 
 Flutter · Dart 3 · Riverpod 2 · go_router · SharedPreferences (JSON) ·
-Syncfusion Calendar · liquid_glass_widgets · audioplayers · wakelock_plus ·
-GitHub Actions
+Syncfusion Calendar · flutter_local_notifications · liquid_glass_widgets ·
+audioplayers · wakelock_plus · GitHub Actions
 
 ## Como rodar
 
@@ -107,16 +114,25 @@ Ritmo/
     ├── lib/
     │   ├── main.dart          composition root
     │   ├── core/              tema, providers, serviços, widgets compartilhados
-    │   ├── shell/             casca do app (fundo e navegação)
+    │   ├── shell/             casca do app: fundo, navegação, virada do dia, sincronização
     │   ├── routing/
-    │   └── features/          hoje · hábitos · tarefas · foco · estatísticas · configurações
+    │   └── features/          hoje · hábitos · tarefas · foco · estatísticas · avisos · configurações
     └── test/                  unitários, widget e fakes
 ```
 
+## Privacidade
+
+O Ritmo não tem conta, servidor, anúncios nem analytics, e não pede acesso à
+internet. Hábitos, tarefas e configurações ficam só no armazenamento do
+próprio celular.
+
 ## Próximos passos
 
-Antes da Play Store: chave de upload e assinatura do release. Depois: backup
-dos dados e notificações locais.
+- **Para publicar:** chave de upload e assinatura do release, política de
+  privacidade, ficha da loja e teste fechado na Play Store.
+- **Depois:** backup dos dados (exportar e importar), criação rápida pelo
+  **+** da tela Hoje e subtarefas no formulário.
+
 [Backlog completo](docs/requisitos/README.md#3-backlog).
 
 ## Licença
