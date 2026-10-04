@@ -1,0 +1,7 @@
+# Copie para "key.properties" (mesma pasta) e preencha. O key.properties fica
+# fora do Git (.gitignore) — nunca publique senhas nem o arquivo .jks.
+storePassword=SUA_SENHA
+keyPassword=SUA_SENHA
+keyAlias=upload
+# Use barras normais no Windows:
+storeFile=C:/Users/SEU_USUARIO/upload-keystore.jks

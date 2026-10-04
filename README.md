@@ -122,9 +122,9 @@ Ritmo/
 
 ## Privacidade
 
-O Ritmo não tem conta, servidor, anúncios nem analytics, e não pede acesso à
-internet. Hábitos, tarefas e configurações ficam só no armazenamento do
-próprio celular.
+O Ritmo não tem conta, servidor, anúncios nem analytics, e não envia nada
+pela internet. Hábitos, tarefas e configurações ficam só no armazenamento do
+próprio celular. [Política de privacidade](docs/politica-de-privacidade.md).
 
 ## Próximos passos
 
