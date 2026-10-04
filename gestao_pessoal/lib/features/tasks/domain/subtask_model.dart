@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_colors.dart';
 
 enum TaskPriority { low, medium, high }
 
@@ -21,11 +20,13 @@ extension TaskPriorityX on TaskPriority {
   ///
   /// - `high`   → accent puro
   /// - `medium` → accent escurecido (HSV value 0.7)
-  /// - `low`    → cinza muted (textSecondary)
-  Color colorAt(Color accent) {
+  /// - `low`    → [muted] (cor de texto secundário do tema)
+  ///
+  /// As cores vêm por parâmetro: o domínio não conhece o tema.
+  Color colorAt(Color accent, {required Color muted}) {
     switch (this) {
       case TaskPriority.low:
-        return AppColors.textSecondary;
+        return muted;
       case TaskPriority.medium:
         return HSVColor.fromColor(accent).withValue(0.7).toColor();
       case TaskPriority.high:

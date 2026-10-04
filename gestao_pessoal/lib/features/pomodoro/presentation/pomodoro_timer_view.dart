@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/color_hex.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../settings/data/settings_controller.dart';
 import '../data/pomodoro_controller.dart';
@@ -25,27 +26,23 @@ class PomodoroTimerView extends ConsumerWidget {
   Color _accentColor(String focusHex, String shortHex, String longHex) {
     switch (state.type) {
       case PomodoroType.focus:
-        return _hexToColor(focusHex);
+        return colorFromHex(focusHex);
       case PomodoroType.shortBreak:
-        return _hexToColor(shortHex);
+        return colorFromHex(shortHex);
       case PomodoroType.longBreak:
-        return _hexToColor(longHex);
+        return colorFromHex(longHex);
     }
   }
 
-  Color _hexToColor(String hex) {
-    final clean = hex.replaceAll('#', '');
-    return Color(int.parse('FF$clean', radix: 16));
-  }
 
-  String get _label {
+  String _label({required bool glass}) {
     switch (state.type) {
       case PomodoroType.focus:
-        return AppColors.isGlass ? 'FOCO' : 'Foco';
+        return glass ? 'FOCO' : 'Foco';
       case PomodoroType.shortBreak:
-        return AppColors.isGlass ? 'PAUSA CURTA' : 'Pausa curta';
+        return glass ? 'PAUSA CURTA' : 'Pausa curta';
       case PomodoroType.longBreak:
-        return AppColors.isGlass ? 'PAUSA LONGA' : 'Pausa longa';
+        return glass ? 'PAUSA LONGA' : 'Pausa longa';
     }
   }
 
@@ -58,13 +55,13 @@ class PomodoroTimerView extends ConsumerWidget {
       settings.pomodoroLongBreakColor,
     );
 
-    // Herda a fonte do tema (Jost embutida no editorial; DM Sans no glass, via
-    // GoogleFonts.dmSans). Antes este widget usava GoogleFonts.spaceGrotesk
+    // Herda a fonte do tema (Jost no editorial, DM Sans no glass, ambas
+    // embutidas). Antes este widget usava GoogleFonts.spaceGrotesk
     // / GoogleFonts.inter, que disparavam download sob demanda da CDN do
     // Google Fonts (fonts.gstatic.com) na primeira vez que o usuário
     // entrava na aba Foco — gerava um delay visível de 1–3s.
     final theme = Theme.of(context);
-    final glass = AppColors.isGlass;
+    final glass = context.palette.isGlass;
     final labelStyle = glass
         ? theme.textTheme.labelLarge!.copyWith(
             fontWeight: FontWeight.w700,
@@ -78,12 +75,12 @@ class PomodoroTimerView extends ConsumerWidget {
       letterSpacing: -2,
       height: 1.0,
       fontFeatures: const [FontFeature.tabularFigures()],
-      color: AppColors.textPrimary,
+      color: context.palette.textPrimary,
     );
     final percentStyle = theme.textTheme.labelLarge!.copyWith(
       fontWeight: FontWeight.w500,
       letterSpacing: 0.5,
-      color: AppColors.textSecondary,
+      color: context.palette.textSecondary,
     );
 
     return Center(
@@ -101,8 +98,8 @@ class PomodoroTimerView extends ConsumerWidget {
                     progress: state.progress,
                     color: accent,
                     track: glass
-                        ? AppColors.surfaceElevated
-                        : AppColors.textPrimary.withValues(alpha: 0.35),
+                        ? context.palette.surfaceElevated
+                        : context.palette.textPrimary.withValues(alpha: 0.35),
                     editorial: !glass,
                   ),
                 ),
@@ -113,7 +110,7 @@ class PomodoroTimerView extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    _label,
+                    _label(glass: glass),
                     textAlign: TextAlign.center,
                     style: labelStyle,
                   ),

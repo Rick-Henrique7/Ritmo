@@ -1,7 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/app_colors.dart';
 import '../domain/app_settings.dart';
 import 'prefs_settings_repository.dart';
 
@@ -104,6 +102,12 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _persist();
   }
 
+  /// Avisos e lembretes (RF-NT-07).
+  Future<void> updateNotifications(NotificationSettings value) async {
+    state = state.copyWith(notifications: value);
+    await _persist();
+  }
+
   Future<void> resetDefaults() async {
     // Mantém o estilo escolhido; restaura o resto.
     final style = state.style;
@@ -117,32 +121,3 @@ class SettingsNotifier extends Notifier<AppSettings> {
 
 final settingsProvider =
     NotifierProvider<SettingsNotifier, AppSettings>(SettingsNotifier.new);
-
-/// Provider que resolve a cor de destaque (accent) configurada pelo
-/// usuário como `Color`. Widgets que precisam pintar elementos
-/// "ativos" (priority bar, check button, etc.) consomem via
-/// `ref.watch(accentColorProvider)`.
-final accentColorProvider = Provider<Color>((ref) {
-  final hex = ref.watch(settingsProvider).accentColor;
-  final clean = hex.replaceAll('#', '');
-  return Color(int.parse('FF$clean', radix: 16));
-});
-
-/// Provider que resolve a cor de texto (foreground) configurada pelo
-/// usuário como `Color`. Widgets customizados que pintam texto
-/// específico (não via `Theme.of(context).textTheme`) consomem
-/// daqui para reagir à personalização.
-///
-/// Hierarquia recomendada ao usar:
-/// - foreground puro para texto primário (títulos, contadores)
-/// - foreground com `Color.withValues(alpha: 0.7)` para texto
-///   secundário (subtítulos, labels) — preserva hierarquia visual
-///   mantendo coerência com a cor escolhida.
-final textColorProvider = Provider<Color>((ref) {
-  final settings = ref.watch(settingsProvider);
-  // No editorial o texto é sempre tinta grafite (contraste no creme).
-  if (!settings.style.isGlass) return AppPalette.editorial.textPrimary;
-  final hex = settings.textColor;
-  final clean = hex.replaceAll('#', '');
-  return Color(int.parse('FF$clean', radix: 16));
-});

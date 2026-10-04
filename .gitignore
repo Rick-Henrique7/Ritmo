@@ -4,9 +4,8 @@
 .gradle/
 local.properties
 
-# Build artifacts (exceto o APK que é entregue ao usuário)
+# Build artifacts
 **/build/
-!**/build/app/outputs/flutter-apk/
 
 # Node (scripts de geração de ícones)
 gestao_pessoal/scripts/node_modules/
@@ -22,3 +21,10 @@ gestao_pessoal/scripts/package-lock.json
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Pacotes gerados: distribuídos pela Play Store / Releases, nunca pelo git
+*.apk
+*.aab
+
+# Cobertura de testes (gerada pelo CI e localmente)
+coverage/

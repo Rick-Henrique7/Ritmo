@@ -17,6 +17,10 @@ class PrefsStore {
     return PrefsStore(prefs);
   }
 
+  /// Relê do disco. Necessário quando outro isolate (a ação "Concluir" de
+  /// uma notificação) gravou dados enquanto o app estava aberto.
+  Future<void> reload() => _prefs.reload();
+
   String? readRaw(String key) => _prefs.getString(key);
 
   Future<void> writeRaw(String key, String value) async {

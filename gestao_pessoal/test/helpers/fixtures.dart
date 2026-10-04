@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:gestao_pessoal/features/habits/domain/habit_model.dart';
 import 'package:gestao_pessoal/features/tasks/domain/subtask_model.dart';
 import 'package:gestao_pessoal/features/tasks/domain/task_model.dart';
@@ -14,6 +15,7 @@ TaskModel task({
   String id = 't',
   String title = 'Tarefa',
   DateTime? dueDate,
+  TimeOfDay? dueTime,
   List<int> repeatDays = const [],
   bool isCompleted = false,
   DateTime? completedAt,
@@ -27,7 +29,7 @@ TaskModel task({
     priority: TaskPriority.medium,
     category: 'Geral',
     dueDate: dueDate,
-    dueTime: null,
+    dueTime: dueTime,
     repeatDays: repeatDays,
     isCompleted: isCompleted,
     completedAt: completedAt,
@@ -39,12 +41,14 @@ TaskModel task({
 
 HabitModel habit({
   String id = 'h',
+  String title = 'Hábito',
+  TimeOfDay? reminderTime,
   List<int> frequencyDays = const [1, 2, 3, 4, 5, 6, 7],
   List<DateTime> completedDates = const [],
 }) {
   return HabitModel(
     id: id,
-    title: 'Hábito',
+    title: title,
     category: 'Geral',
     iconKey: 'water',
     colorHex: '#4F8A83',
@@ -52,5 +56,6 @@ HabitModel habit({
     targetValue: 1,
     unit: 'vez',
     completedDates: completedDates,
+    reminderTime: reminderTime,
   );
 }

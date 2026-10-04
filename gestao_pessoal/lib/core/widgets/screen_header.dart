@@ -6,7 +6,7 @@ import '../constants/app_colors.dart';
 ///
 /// ```
 /// ───────────────────────────────
-/// Daily Flow                [ações]
+/// Ritmo                [ações]
 /// ───────────────────────────────
 /// Linha de apoio (leve)
 /// Título da tela
@@ -45,9 +45,9 @@ class ScreenHeader extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Daily Flow',
+                  'Ritmo',
                   style: text.labelLarge?.copyWith(
-                    color: AppColors.textPrimary,
+                    color: context.palette.textPrimary,
                     letterSpacing: 0.4,
                   ),
                 ),
@@ -63,7 +63,7 @@ class ScreenHeader extends StatelessWidget {
               child: InkResponse(
                 onTap: onBack,
                 radius: 22,
-                child: Icon(Icons.arrow_back, color: AppColors.textPrimary),
+                child: Icon(Icons.arrow_back, color: context.palette.textPrimary),
               ),
             ),
           const SizedBox(height: 18),
@@ -71,13 +71,13 @@ class ScreenHeader extends StatelessWidget {
             Text(
               eyebrow!,
               style: text.titleMedium?.copyWith(
-                color: AppColors.textPrimary,
+                color: context.palette.textPrimary,
                 fontWeight: FontWeight.w300,
               ),
             ),
           Text(
             title,
-            style: text.headlineMedium?.copyWith(color: AppColors.textPrimary),
+            style: text.headlineMedium?.copyWith(color: context.palette.textPrimary),
           ),
         ],
       ),
@@ -103,7 +103,7 @@ class HeaderAction extends StatelessWidget {
     return IconButton(
       tooltip: tooltip,
       visualDensity: VisualDensity.compact,
-      icon: Icon(icon, color: AppColors.textPrimary, size: 22),
+      icon: Icon(icon, color: context.palette.textPrimary, size: 22),
       onPressed: onTap,
     );
   }
@@ -119,7 +119,7 @@ class HairlineRule extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 1,
-      color: color ?? AppColors.textPrimary.withValues(alpha: 0.55),
+      color: color ?? context.palette.textPrimary.withValues(alpha: 0.55),
     );
   }
 }
@@ -136,7 +136,7 @@ class SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
-    final c = color ?? AppColors.textPrimary;
+    final c = color ?? context.palette.textPrimary;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
@@ -186,7 +186,7 @@ class ArrowCta extends StatelessWidget {
             Text(
               label,
               style: t.labelMedium?.copyWith(
-                color: color ?? AppColors.textPrimary,
+                color: color ?? context.palette.textPrimary,
               ),
             ),
           ],

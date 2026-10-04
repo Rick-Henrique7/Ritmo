@@ -21,8 +21,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.gestao.pessoal.gestao_pessoal"
+        // ID na Play Store: definitivo, não pode mudar depois de publicado.
+        // O namespace acima é só o pacote do código Kotlin e pode diferir.
+        applicationId = "com.aevumtech.ritmo"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

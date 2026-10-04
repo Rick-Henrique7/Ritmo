@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
+import '../utils/color_hex.dart';
 import 'app_colors.dart';
 import 'app_style.dart';
 
-/// Tema central do Daily Flow — um por [AppStyle].
+/// Tema central do Ritmo — um por [AppStyle].
 ///
 /// - **Editorial**: tema claro, fonte **Jost** (geométrica, embutida em
 ///   `assets/fonts`), títulos em peso leve, accent coral, botões em
@@ -14,10 +14,6 @@ import 'app_style.dart';
 class AppTheme {
   AppTheme._();
 
-  static Color _hexToColor(String hex) {
-    final clean = hex.replaceAll('#', '');
-    return Color(int.parse('FF$clean', radix: 16));
-  }
 
   /// Monta o tema do [style]. `textColorHex` só vale no Liquid Glass
   /// (no editorial o texto é sempre tinta grafite para manter contraste
@@ -27,20 +23,22 @@ class AppTheme {
     String? textColorHex,
     String? accentColorHex,
   }) {
-    AppColors.use(style);
-    final p = AppPalette.of(style);
-    final accent = _hexToColor(accentColorHex ?? style.defaultAccentHex);
+    final p = AppPalette.forStyle(style);
+    final accent = colorFromHex(accentColorHex ?? style.defaultAccentHex);
     final foreground = style.isGlass
-        ? _hexToColor(textColorHex ?? '#FFFFFF')
+        ? colorFromHex(textColorHex ?? '#FFFFFF')
         : p.textPrimary;
     final onAccent = AppColors.onColor(accent);
+
+    // Fontes embutidas em assets/fonts (sem download em tempo de execução).
+    final family = style.isGlass ? 'DMSans' : 'Jost';
 
     final base = ThemeData(
       useMaterial3: true,
       brightness: style.isGlass ? Brightness.dark : Brightness.light,
       // Fonte base do app inteiro — inclusive widgets que não herdam do
       // textTheme (dropdowns, campos com `style` próprio).
-      fontFamily: style.isGlass ? GoogleFonts.dmSans().fontFamily : 'Jost',
+      fontFamily: family,
     );
 
     TextStyle font(double size, FontWeight weight, {double? height, double? spacing}) {
@@ -51,9 +49,7 @@ class AppTheme {
         height: height,
         letterSpacing: spacing,
       );
-      return style.isGlass
-          ? GoogleFonts.dmSans(textStyle: s)
-          : s.copyWith(fontFamily: 'Jost');
+      return s.copyWith(fontFamily: family);
     }
 
     // Editorial usa títulos leves (como capa de revista); glass, mais
@@ -108,6 +104,8 @@ class AppTheme {
         style.isGlass ? const Color(0xF0161930) : p.surface;
 
     return base.copyWith(
+      // Paleta do estilo publicada no tema: widgets leem `context.palette`.
+      extensions: [p],
       colorScheme: colorScheme,
       scaffoldBackgroundColor: Colors.transparent,
       canvasColor: style.isGlass ? const Color(0xFF161930) : p.surface,

@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
 
-/// Card padrão do Daily Flow. O visual segue o [AppStyle] ativo:
+/// Card padrão do Ritmo. O visual segue o [AppStyle] ativo:
 ///
 /// - **Editorial**: papel um tom mais claro que o fundo, borda fina de
 ///   tinta, cantos generosos. Com [panel] = `true` vira um painel
-///   grafite (como os blocos escuros de revista) — use [AppColors.onPanel]
+///   grafite (como os blocos escuros de revista) — use [context.palette.onPanel]
 ///   para o texto dentro dele.
 /// - **Liquid Glass**: vidro fosco (`BackdropFilter`), preenchimento
 ///   translúcido, borda com reflexo de luz e sombra suave.
@@ -37,15 +37,15 @@ class LiquidGlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radius = BorderRadius.circular(borderRadius);
-    if (AppColors.isGlass) return _glass(radius);
+    if (context.palette.isGlass) return _glass(radius);
 
     final Color? fill = gradient != null
         ? null
         : panel
-            ? AppColors.panel
+            ? context.palette.panel
             : intensity == GlassIntensity.subtle
                 ? Colors.transparent
-                : AppColors.surface;
+                : context.palette.surface;
     return RepaintBoundary(
       child: Container(
         padding: padding,
@@ -55,7 +55,7 @@ class LiquidGlassCard extends StatelessWidget {
           borderRadius: radius,
           border: panel || gradient != null
               ? null
-              : Border.all(color: AppColors.border, width: 1),
+              : Border.all(color: context.palette.border, width: 1),
         ),
         child: child,
       ),
@@ -74,16 +74,19 @@ class LiquidGlassCard extends StatelessWidget {
           borderRadius: radius,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.28),
-              blurRadius: 30,
-              offset: const Offset(0, 14),
+              color: Colors.black.withValues(alpha: 0.22),
+              blurRadius: 18,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: ClipRRect(
           borderRadius: radius,
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          // `grouped`: todos os cartões desfocam o mesmo retrato do fundo
+          // (ver BackdropGroup no AnimatedBackground). Desfoque 12 já dá o
+          // efeito fosco com bem menos custo que 18.
+          child: BackdropFilter.grouped(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
             child: Container(
               padding: padding,
               decoration: BoxDecoration(

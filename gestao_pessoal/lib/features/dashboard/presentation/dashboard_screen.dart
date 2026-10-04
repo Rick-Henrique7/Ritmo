@@ -10,10 +10,10 @@ import '../../../core/widgets/liquid_glass_card.dart';
 import '../../../core/widgets/screen_header.dart';
 import '../../habits/data/habits_controller.dart';
 import '../../habits/domain/habit_model.dart';
-import '../../settings/data/settings_controller.dart';
 import '../../tasks/data/tasks_controller.dart';
 import '../../tasks/domain/subtask_model.dart';
 import '../../tasks/domain/task_model.dart';
+import '../../tasks/presentation/widgets/overdue_tag.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -22,7 +22,7 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
     final today = ref.watch(todayProvider);
-    final accent = ref.watch(accentColorProvider);
+    final accent = context.accent;
     final habitsToday = ref.watch(habitsForDayProvider(today));
     // Mesma regra da aba "Hoje" de Tarefas (TaskSchedule), incluindo as
     // já feitas hoje — para riscar na lista e contar no progresso.
@@ -82,7 +82,7 @@ class DashboardScreen extends ConsumerWidget {
                       trailing: totalItems == 0
                           ? null
                           : '$totalItems ${totalItems == 1 ? 'item' : 'itens'}',
-                      color: AppColors.onPanel,
+                      color: context.palette.onPanel,
                     ),
                     const SizedBox(height: 10),
                     if (totalItems == 0)
@@ -102,6 +102,7 @@ class DashboardScreen extends ConsumerWidget {
                         _TaskRow(
                           task: todayTasks[i],
                           done: TaskSchedule.isDoneOn(todayTasks[i], today),
+                          overdue: TaskSchedule.isOverdue(todayTasks[i], today),
                           accent: accent,
                           showDivider: habitsToday.isNotEmpty || i > 0,
                           onToggle: () => ref
@@ -114,7 +115,7 @@ class DashboardScreen extends ConsumerWidget {
                         alignment: Alignment.centerRight,
                         child: ArrowCta(
                           label: 'Ver tarefas',
-                          color: AppColors.onPanelMuted,
+                          color: context.palette.onPanelMuted,
                           accent: accent,
                           onTap: () => context.go('/tasks'),
                         ),
@@ -136,7 +137,7 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   void _showCreateSheet(BuildContext context, WidgetRef ref) {
-    final accent = ref.read(accentColorProvider);
+    final accent = context.accent;
     showModalBottomSheet<void>(
       context: context,
       builder: (sheetContext) => SafeArea(
@@ -148,7 +149,7 @@ class DashboardScreen extends ConsumerWidget {
               ListTile(
                 leading: Icon(Icons.water_drop_outlined, color: accent),
                 title: const Text('Novo hábito'),
-                trailing: Icon(Icons.east, color: AppColors.textTertiary),
+                trailing: Icon(Icons.east, color: context.palette.textTertiary),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   context.go('/habits');
@@ -157,7 +158,7 @@ class DashboardScreen extends ConsumerWidget {
               ListTile(
                 leading: Icon(Icons.task_alt, color: accent),
                 title: const Text('Nova tarefa'),
-                trailing: Icon(Icons.east, color: AppColors.textTertiary),
+                trailing: Icon(Icons.east, color: context.palette.textTertiary),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   context.go('/tasks');
@@ -208,16 +209,30 @@ class _ProgressHero extends StatelessWidget {
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(_two(done), style: big?.copyWith(color: accent)),
-            const SizedBox(width: 10),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                '/ ${_two(total)}',
-                style: t.displaySmall?.copyWith(color: AppColors.textTertiary),
+            // Números grandes encolhem para caber em telas estreitas ou
+            // com fonte do sistema aumentada (em vez de estourar a linha).
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.bottomLeft,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(_two(done), style: big?.copyWith(color: accent)),
+                    const SizedBox(width: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        '/ ${_two(total)}',
+                        style: t.displaySmall
+                            ?.copyWith(color: context.palette.textTertiary),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            const Spacer(),
+            const SizedBox(width: 12),
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Column(
@@ -226,7 +241,7 @@ class _ProgressHero extends StatelessWidget {
                   Text(
                     '${(progress * 100).round()}%',
                     style: t.headlineSmall?.copyWith(
-                      color: AppColors.textPrimary,
+                      color: context.palette.textPrimary,
                     ),
                   ),
                   Text(
@@ -236,7 +251,7 @@ class _ProgressHero extends StatelessWidget {
                             ? 'dia completo'
                             : 'faltam $remaining',
                     style: t.labelMedium?.copyWith(
-                      color: AppColors.textSecondary,
+                      color: context.palette.textSecondary,
                     ),
                   ),
                 ],
@@ -266,7 +281,7 @@ class _ThinProgress extends StatelessWidget {
         builder: (context, c) => Stack(
           alignment: Alignment.centerLeft,
           children: [
-            Container(height: 1, color: AppColors.textPrimary.withValues(alpha: 0.5)),
+            Container(height: 1, color: context.palette.textPrimary.withValues(alpha: 0.5)),
             TweenAnimationBuilder<double>(
               tween: Tween(begin: 0, end: value.clamp(0.0, 1.0)),
               duration: const Duration(milliseconds: 900),
@@ -302,13 +317,13 @@ class _EmptyRadar extends StatelessWidget {
           Text(
             'Dia livre por enquanto. Crie um hábito ou uma tarefa para '
             'começar a preencher o radar.',
-            style: t.bodyMedium?.copyWith(color: AppColors.onPanelMuted),
+            style: t.bodyMedium?.copyWith(color: context.palette.onPanelMuted),
           ),
           Align(
             alignment: Alignment.centerRight,
             child: ArrowCta(
               label: 'Criar hábito',
-              color: AppColors.onPanelMuted,
+              color: context.palette.onPanelMuted,
               accent: accent,
               onTap: () => context.go('/habits'),
             ),
@@ -329,11 +344,13 @@ class _RadarRow extends StatelessWidget {
     required this.accent,
     required this.showDivider,
     required this.onToggle,
+    this.badge,
   });
 
   final Widget leading;
   final String title;
   final String? subtitle;
+  final Widget? badge;
   final bool done;
   final Color accent;
   final bool showDivider;
@@ -345,7 +362,7 @@ class _RadarRow extends StatelessWidget {
     return Column(
       children: [
         if (showDivider)
-          Container(height: 1, color: AppColors.onPanel.withValues(alpha: 0.12)),
+          Container(height: 1, color: context.palette.onPanel.withValues(alpha: 0.12)),
         InkWell(
           onTap: onToggle,
           borderRadius: BorderRadius.circular(12),
@@ -359,18 +376,28 @@ class _RadarRow extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        title,
-                        style: t.bodyLarge?.copyWith(
-                          color: done ? AppColors.onPanelMuted : AppColors.onPanel,
-                          decoration: done ? TextDecoration.lineThrough : null,
-                          decorationColor: AppColors.onPanelMuted,
-                        ),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              title,
+                              style: t.bodyLarge?.copyWith(
+                                color: done ? context.palette.onPanelMuted : context.palette.onPanel,
+                                decoration: done ? TextDecoration.lineThrough : null,
+                                decorationColor: context.palette.onPanelMuted,
+                              ),
+                            ),
+                          ),
+                          if (badge != null) ...[
+                            const SizedBox(width: 8),
+                            badge!,
+                          ],
+                        ],
                       ),
                       if (subtitle != null && subtitle!.isNotEmpty)
                         Text(
                           subtitle!,
-                          style: t.bodySmall?.copyWith(color: AppColors.onPanelMuted),
+                          style: t.bodySmall?.copyWith(color: context.palette.onPanelMuted),
                         ),
                     ],
                   ),
@@ -427,6 +454,7 @@ class _TaskRow extends StatelessWidget {
   const _TaskRow({
     required this.task,
     required this.done,
+    required this.overdue,
     required this.accent,
     required this.showDivider,
     required this.onToggle,
@@ -434,6 +462,7 @@ class _TaskRow extends StatelessWidget {
 
   final TaskModel task;
   final bool done;
+  final bool overdue;
   final Color accent;
   final bool showDivider;
   final VoidCallback onToggle;
@@ -441,8 +470,8 @@ class _TaskRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = task.priority == TaskPriority.low
-        ? AppColors.onPanelMuted
-        : task.priority.colorAt(accent);
+        ? context.palette.onPanelMuted
+        : task.priority.colorAt(accent, muted: context.palette.onPanelMuted);
     return _RadarRow(
       leading: SizedBox(
         width: 36,
@@ -460,6 +489,7 @@ class _TaskRow extends StatelessWidget {
       ),
       title: task.title,
       subtitle: 'Tarefa · ${task.category} · ${task.priority.label.toLowerCase()}',
+      badge: overdue ? OverdueTag(color: accent) : null,
       done: done,
       accent: accent,
       showDivider: showDivider,
@@ -484,7 +514,7 @@ class _CheckDot extends StatelessWidget {
         shape: BoxShape.circle,
         color: done ? accent : Colors.transparent,
         border: Border.all(
-          color: done ? accent : AppColors.onPanelMuted,
+          color: done ? accent : context.palette.onPanelMuted,
           width: 1.4,
         ),
       ),

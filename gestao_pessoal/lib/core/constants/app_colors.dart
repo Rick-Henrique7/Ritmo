@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 
 import 'app_style.dart';
 
-/// Paleta de cores de um estilo visual.
+/// Paleta de cores de um estilo visual, publicada no tema como
+/// [ThemeExtension].
+///
+/// Widgets leem com `context.palette` — assim reagem sozinhos quando o
+/// estilo muda (o Flutter reconstrói quem depende do `Theme`). Antes a
+/// paleta era um campo estático global trocado em runtime, o que exigia
+/// recriar a árvore inteira e não funcionava fora do `MaterialApp`.
+/// Ver `docs/adr/0006-palette-como-theme-extension.md`.
 @immutable
-class AppPalette {
+class AppPalette extends ThemeExtension<AppPalette> {
   const AppPalette({
+    required this.style,
     required this.background,
     required this.surface,
     required this.surface2,
@@ -19,6 +27,9 @@ class AppPalette {
     required this.decoration,
     required this.isDark,
   });
+
+  /// Estilo que originou a paleta.
+  final AppStyle style;
 
   /// Fundo da tela.
   final Color background;
@@ -46,8 +57,20 @@ class AppPalette {
 
   final bool isDark;
 
+  bool get isGlass => style == AppStyle.liquidGlass;
+
+  /// Superfície elevada (nome antigo, mantido por clareza nas telas).
+  Color get surfaceElevated => surface2;
+  Color get glassBorder => border;
+
+  /// Véu translúcido no sentido do texto (escurece no claro, clareia no
+  /// escuro). Substitui `Colors.white.withValues(alpha: x)`, que some no
+  /// estilo editorial.
+  Color veil(double alpha) => textPrimary.withValues(alpha: alpha);
+
   /// Editorial — papel creme, tinta grafite, painéis escuros.
   static const editorial = AppPalette(
+    style: AppStyle.editorial,
     background: Color(0xFFEDE5D8),
     surface: Color(0xFFF6F0E6),
     surface2: Color(0xFFE3D9CA),
@@ -64,6 +87,7 @@ class AppPalette {
 
   /// Liquid Glass — noite azulada com vidro translúcido.
   static const liquidGlass = AppPalette(
+    style: AppStyle.liquidGlass,
     background: Color(0xFF0B0D1A),
     surface: Color(0x1AFFFFFF),
     surface2: Color(0x24FFFFFF),
@@ -78,61 +102,88 @@ class AppPalette {
     isDark: true,
   );
 
-  static AppPalette of(AppStyle style) => switch (style) {
+  static AppPalette forStyle(AppStyle style) => switch (style) {
         AppStyle.editorial => editorial,
         AppStyle.liquidGlass => liquidGlass,
       };
-}
 
-/// Tokens de cor e espaçamento do Daily Flow.
-///
-/// As cores dependem do [AppStyle] ativo e são trocadas por
-/// [AppColors.use] (chamado pelo `DailyFlowApp` a cada build). Por isso
-/// são *getters* e não `const` — não use `AppColors.<cor>` dentro de
-/// expressões `const`.
-class AppColors {
-  AppColors._();
+  /// Paleta do tema atual. Fora de um tema do app (ex.: um widget
+  /// testado isolado) cai no editorial em vez de quebrar.
+  static AppPalette of(BuildContext context) =>
+      Theme.of(context).extension<AppPalette>() ?? editorial;
 
-  static AppStyle _style = AppStyle.editorial;
-  static AppPalette _p = AppPalette.editorial;
-
-  /// Ativa a paleta do [style]. Seguro chamar a cada build.
-  static void use(AppStyle style) {
-    _style = style;
-    _p = AppPalette.of(style);
+  @override
+  AppPalette copyWith({
+    AppStyle? style,
+    Color? background,
+    Color? surface,
+    Color? surface2,
+    Color? textPrimary,
+    Color? textSecondary,
+    Color? textTertiary,
+    Color? border,
+    Color? panel,
+    Color? onPanel,
+    Color? onPanelMuted,
+    Color? decoration,
+    bool? isDark,
+  }) {
+    return AppPalette(
+      style: style ?? this.style,
+      background: background ?? this.background,
+      surface: surface ?? this.surface,
+      surface2: surface2 ?? this.surface2,
+      textPrimary: textPrimary ?? this.textPrimary,
+      textSecondary: textSecondary ?? this.textSecondary,
+      textTertiary: textTertiary ?? this.textTertiary,
+      border: border ?? this.border,
+      panel: panel ?? this.panel,
+      onPanel: onPanel ?? this.onPanel,
+      onPanelMuted: onPanelMuted ?? this.onPanelMuted,
+      decoration: decoration ?? this.decoration,
+      isDark: isDark ?? this.isDark,
+    );
   }
 
-  static AppStyle get style => _style;
-  static bool get isGlass => _style == AppStyle.liquidGlass;
-  static AppPalette get palette => _p;
+  /// Interpolação usada pelo `AnimatedTheme` ao trocar de estilo.
+  @override
+  AppPalette lerp(ThemeExtension<AppPalette>? other, double t) {
+    if (other is! AppPalette) return this;
+    Color c(Color a, Color b) => Color.lerp(a, b, t)!;
+    return AppPalette(
+      style: t < 0.5 ? style : other.style,
+      background: c(background, other.background),
+      surface: c(surface, other.surface),
+      surface2: c(surface2, other.surface2),
+      textPrimary: c(textPrimary, other.textPrimary),
+      textSecondary: c(textSecondary, other.textSecondary),
+      textTertiary: c(textTertiary, other.textTertiary),
+      border: c(border, other.border),
+      panel: c(panel, other.panel),
+      onPanel: c(onPanel, other.onPanel),
+      onPanelMuted: c(onPanelMuted, other.onPanelMuted),
+      decoration: c(decoration, other.decoration),
+      isDark: t < 0.5 ? isDark : other.isDark,
+    );
+  }
+}
 
-  // === Superfícies ===
-  static Color get background => _p.background;
-  static Color get surface => _p.surface;
-  static Color get surface2 => _p.surface2;
-  static Color get surfaceElevated => _p.surface2;
+/// Atalhos: `context.palette.textPrimary`, `context.accent`.
+extension AppPaletteContext on BuildContext {
+  AppPalette get palette => AppPalette.of(this);
 
-  // === Texto ===
-  static Color get textPrimary => _p.textPrimary;
-  static Color get textSecondary => _p.textSecondary;
-  static Color get textTertiary => _p.textTertiary;
+  /// Cor de destaque escolhida pelo usuário. O tema já a recebe como
+  /// `colorScheme.primary`; ler daqui evita que uma feature importe as
+  /// configurações só para pegar uma cor (ADR 0008).
+  Color get accent => Theme.of(this).colorScheme.primary;
 
-  // === Linhas ===
-  static Color get border => _p.border;
-  static Color get glassBorder => _p.border;
+  /// Cor de texto do tema (no Liquid Glass, a escolhida pelo usuário).
+  Color get foreground => Theme.of(this).colorScheme.onSurface;
+}
 
-  // === Painel de destaque ===
-  static Color get panel => _p.panel;
-  static Color get onPanel => _p.onPanel;
-  static Color get onPanelMuted => _p.onPanelMuted;
-  static Color get decoration => _p.decoration;
-
-  /// Véu translúcido no sentido do texto (escurece no claro, clareia
-  /// no escuro). Substitui `Colors.white.withValues(alpha: x)`, que
-  /// some no estilo editorial.
-  static Color veil(double alpha) =>
-      _p.textPrimary.withValues(alpha: alpha);
-
+/// Tokens que **não** dependem do estilo: espaçamento, raios e uma
+/// função pura de contraste. Cores por estilo ficam em [AppPalette].
+abstract final class AppColors {
   /// Texto legível sobre uma cor sólida qualquer (ex.: accent).
   static Color onColor(Color c) =>
       c.computeLuminance() > 0.55 ? const Color(0xFF2E2D2B) : Colors.white;

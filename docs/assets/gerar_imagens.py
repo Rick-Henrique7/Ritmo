@@ -1,4 +1,4 @@
-"""Gera as imagens SVG da documentação no estilo editorial do Daily Flow.
+"""Gera as imagens SVG da documentação no estilo editorial do Ritmo.
 
 Uso: python docs/assets/gerar_imagens.py docs/assets <n_unitarios> <n_widget>
 """
@@ -36,7 +36,7 @@ def head(w, h, title, desc):
 
 def header(x, y, w, eyebrow, title):
     return f'''<line x1="{x}" y1="{y}" x2="{x + w}" y2="{y}" stroke="{INK}" stroke-opacity=".55"/>
-<text x="{x}" y="{y + 27}" class="eyebrow">Daily Flow · engenharia</text>
+<text x="{x}" y="{y + 27}" class="eyebrow">Ritmo · engenharia</text>
 <line x1="{x}" y1="{y + 40}" x2="{x + w}" y2="{y + 40}" stroke="{INK}" stroke-opacity=".55"/>
 <text x="{x}" y="{y + 74}" class="eyebrow" style="font-weight:300;font-size:17px">{eyebrow}</text>
 <text x="{x}" y="{y + 110}" class="title">{title}</text>
@@ -51,7 +51,7 @@ def arrowhead(x, y, deg, color=CORAL, s=9):
 def ciclo():
     W, H = 1200, 860
     cx, cy, R = 600, 500, 235
-    s = head(W, H, "Ciclo de vida de desenvolvimento do Daily Flow",
+    s = head(W, H, "Ciclo de vida de desenvolvimento do Ritmo",
              "Seis fases em ciclo: planejar, projetar, implementar, testar, revisar e integrar, lançar; "
              "o feedback do lançamento volta para o planejamento.")
     s += f'<circle cx="{W - 30}" cy="30" r="150" fill="{CORAL}"/>'
@@ -133,7 +133,7 @@ def pipeline():
 
 def piramide(unit, widget, integ):
     W, H = 1100, 720
-    s = head(W, H, "Pirâmide de testes do Daily Flow",
+    s = head(W, H, "Pirâmide de testes do Ritmo",
              f"Base: {unit} testes unitários de domínio e controllers; meio: {widget} teste de widget; "
              f"topo: {integ} testes de integração, planejados.")
     s += f'<circle cx="{W + 40}" cy="{H + 30}" r="200" fill="{CORAL}"/>'
@@ -163,7 +163,7 @@ def piramide(unit, widget, integ):
 
 def camadas():
     W, H = 1200, 800
-    s = head(W, H, "Arquitetura em camadas do Daily Flow",
+    s = head(W, H, "Arquitetura em camadas do Ritmo",
              "Presentation depende de Data, que depende de Domain. Data implementa as interfaces de repositório "
              "do Domain sobre SharedPreferences. Core oferece providers, serviços, tema e utilitários a todas as camadas.")
     s += f'<circle cx="{W + 10}" cy="-10" r="160" fill="{CORAL}"/>'
@@ -195,7 +195,7 @@ def camadas():
     cx = X + Wb + 36
     s += f'<rect x="{cx}" y="210" width="268" height="412" rx="26" fill="{CORAL}"/>'
     s += f'<text x="{cx + 28}" y="254" style="font-size:22px;fill:{PAPER}">Core</text>'
-    items = ["providers de infraestrutura", "(armazenamento, hoje,", "vibração, som)", "",
+    items = ["providers de infraestrutura", "(armazenamento, hoje, relógio,", "vibração, som, tela acesa)", "",
              "tema e paleta por estilo", "widgets compartilhados", "utilitários de data e JSON"]
     for i, t in enumerate(items):
         s += f'<text x="{cx + 28}" y="{294 + i * 26}" style="font-size:14px;fill:{PAPER}">{t}</text>'
@@ -204,12 +204,55 @@ def camadas():
     return s + '</svg>\n'
 
 
+def timer():
+    """Contar tiques × calcular pelo horário de término."""
+    W, H = 1200, 700
+    s = head(W, H, "Timer de foco: contar tiques ou calcular pelo horário de término",
+             "Antes, o timer descontava um segundo a cada tique; em segundo plano os tiques param e o tempo "
+             "atrasa. Agora ele guarda o horário de término e calcula o restante pelo relógio a cada tique.")
+    s += f'<circle cx="{W + 20}" cy="20" r="150" fill="{CORAL}"/>'
+    s += f'<circle cx="{W - 120}" cy="110" r="100" fill="none" stroke="{INK}" stroke-opacity=".5"/>'
+    s += header(48, 40, 640, "Refatoração · etapa 3", "Timer pelo horário de término")
+    X0, X1 = 120, 1080
+    gap0, gap1 = 470, 820
+
+    def lane(y, titulo, sub, depois):
+        out = f'<text x="48" y="{y - 52}" class="h" style="font-size:20px">{titulo}</text>'
+        out += f'<text x="48" y="{y - 30}" class="s">{sub}</text>'
+        out += f'<line x1="{X0}" y1="{y}" x2="{gap0}" y2="{y}" stroke="{INK}" stroke-width="1.3"/>'
+        out += f'<line x1="{gap0}" y1="{y}" x2="{gap1}" y2="{y}" stroke="{INK}" stroke-opacity=".5" stroke-dasharray="3 6"/>'
+        out += f'<line x1="{gap1}" y1="{y}" x2="{X1}" y2="{y}" stroke="{INK}" stroke-width="1.3"/>'
+        for x in range(X0, gap0, 22):
+            out += f'<line x1="{x}" y1="{y - 7}" x2="{x}" y2="{y + 7}" stroke="{CORAL}" stroke-width="2"/>'
+        for x in range(gap1, X1, 22):
+            out += f'<line x1="{x}" y1="{y - 7}" x2="{x}" y2="{y + 7}" stroke="{CORAL}" stroke-width="2"/>'
+        out += f'<rect x="{gap0 + 20}" y="{y - 22}" width="{gap1 - gap0 - 40}" height="44" rx="22" fill="{PAPER}" stroke="{LINE}"/>'
+        out += f'<text x="{(gap0 + gap1) / 2}" y="{y + 5}" text-anchor="middle" class="s">app em segundo plano · sem tiques</text>'
+        out += f'<text x="{X0}" y="{y + 36}" class="s mono" style="font-size:12px">09:00 iniciar</text>'
+        out += f'<text x="{X1 - 52}" y="{y + 36}" text-anchor="end" class="s mono" style="font-size:12px">09:25 fim real</text>'
+        return out
+
+    y1 = 330
+    s += lane(y1, "Antes · contava tiques", "remaining = remaining − 1 a cada segundo recebido", False)
+    s += f'<circle cx="{X1}" cy="{y1}" r="40" fill="{PANEL}"/>'
+    s += f'<text x="{X1}" y="{y1 + 6}" text-anchor="middle" class="on mono" style="font-size:15px">12:40</text>'
+    s += f'<text x="{X1 - 52}" y="{y1 - 50}" text-anchor="end" class="n">ainda faltam 12 min no mostrador</text>'
+
+    y2 = 560
+    s += lane(y2, "Agora · horário de término", "endsAt = início + 25 min; restante = endsAt − agora (PomodoroCycle.secondsLeft)", True)
+    s += f'<circle cx="{X1}" cy="{y2}" r="40" fill="{CORAL}"/>'
+    s += f'<text x="{X1}" y="{y2 + 6}" text-anchor="middle" class="mono" style="font-size:15px;fill:{PAPER}">00:00</text>'
+    s += f'<text x="{X1 - 52}" y="{y2 - 50}" text-anchor="end" class="n">sessão concluída e gravada às 09:25</text>'
+    return s + '</svg>\n'
+
+
 if __name__ == "__main__":
     out = sys.argv[1]
     unit, widget = int(sys.argv[2]), int(sys.argv[3])
     for name, svg in [("ciclo-de-vida.svg", ciclo()), ("do-commit-ao-release.svg", pipeline()),
                       ("piramide-de-testes.svg", piramide(unit, widget, 0)),
-                      ("arquitetura-camadas.svg", camadas())]:
+                      ("arquitetura-camadas.svg", camadas()),
+                      ("etapa-3-timer.svg", timer())]:
         with open(f"{out}/{name}", "w", encoding="utf-8") as f:
             f.write(svg)
     print("ok")

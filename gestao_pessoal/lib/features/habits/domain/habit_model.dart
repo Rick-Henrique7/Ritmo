@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/utils/color_hex.dart';
+
 /// Catálogo fixo de ícones permitidos para hábitos.
 ///
 /// Mantemos um set fechado (em vez de aceitar `codePoint` arbitrário)
@@ -71,10 +73,7 @@ class HabitModel {
 
   IconData get icon => HabitIcons.fromKey(iconKey);
 
-  Color get color {
-    final hex = colorHex.replaceAll('#', '');
-    return Color(int.parse('FF$hex', radix: 16));
-  }
+  Color get color => colorFromHex(colorHex);
 
   bool isScheduledFor(DateTime day) {
     final weekday = day.weekday;

@@ -1,5 +1,10 @@
 # UI & Feature Spec — Tela de Estatísticas & Progresso
 
+> **Visão original de interface.** O que está implementado hoje, com status e
+> critérios de aceite, está em [requisitos funcionais](requisitos/funcionais.md).
+> Itens desta spec que não aparecem lá como ✅ estão no backlog ou foram
+> descartados.
+
 > **Objetivo:** Transformar os dados de uso diário em gráficos simples,
 > atraentes e motivacionais, permitindo visualizar a evolução pessoal em
 > hábitos, tarefas concluídas e horas de foco acumuladas.

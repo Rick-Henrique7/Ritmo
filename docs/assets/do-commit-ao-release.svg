@@ -18,7 +18,7 @@
 </style>
 <rect width="1200" height="600" fill="#EDE5D8"/>
 <circle cx="1220" cy="590" r="160" fill="#E4553F"/><circle cx="1060" cy="80" r="46" fill="url(#zig)"/><line x1="48" y1="40" x2="668" y2="40" stroke="#2E2D2B" stroke-opacity=".55"/>
-<text x="48" y="67" class="eyebrow">Daily Flow · engenharia</text>
+<text x="48" y="67" class="eyebrow">Ritmo · engenharia</text>
 <line x1="48" y1="80" x2="668" y2="80" stroke="#2E2D2B" stroke-opacity=".55"/>
 <text x="48" y="114" class="eyebrow" style="font-weight:300;font-size:17px">Fluxo de uma mudança</text>
 <text x="48" y="150" class="title">Do commit ao release</text>

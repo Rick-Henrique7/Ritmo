@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Creme do estilo Editorial: mesma cor do fundo do app, para a
+         abertura emendar com a primeira tela sem "piscar". -->
+    <color name="splash_background">#EDE5D8</color>
+</resources>

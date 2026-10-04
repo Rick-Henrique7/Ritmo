@@ -1,7 +1,7 @@
 name: gestao_pessoal
 description: >-
-  Daily Flow — Aplicativo pessoal de gestão de rotina com hábitos, tarefas,
-  timer Pomodoro e estatísticas. Visual Liquid Glass 3D com paleta Dark/Green.
+  Ritmo — Aplicativo pessoal de gestão de rotina com hábitos, tarefas,
+  timer Pomodoro e estatísticas. Dois estilos: Editorial e Liquid Glass.
 publish_to: 'none'
 
 # Versionamento semântico: MAJOR.MINOR.PATCH+BUILD
@@ -33,13 +33,11 @@ dependencies:
 
   # Interface, Animações e Gráficos
   flutter_animate: ^4.5.0
-  google_fonts: ^6.2.0
-  flutter_colorpicker: ^1.1.0
 
   # Recursos Nativos e Utilitários
-  flutter_local_notifications: ^18.0.1
-  wakelock_plus: ^1.2.0
-  vibration: ^2.0.0
+  wakelock_plus: ^1.2.0 # tela acesa durante o timer de foco
+  flutter_local_notifications: ^19.4.0 # avisos locais (ADR 0009)
+  timezone: ^0.10.0 # data do agendamento exigida pelo plugin
   intl: ^0.20.2
 
   # Audio (som de conclusão de tarefa)
@@ -69,8 +67,9 @@ flutter:
   assets:
     - assets/sounds/success.mp3
 
-  # Jost — fonte geométrica do estilo Editorial (embutida, funciona
-  # offline e sem atraso de download). Licença OFL em assets/fonts/OFL.txt.
+  # Fontes embutidas: funcionam offline e sem nenhuma requisição de rede.
+  # Jost (Editorial) — licença em assets/fonts/OFL.txt.
+  # DM Sans (Liquid Glass) — licença em assets/fonts/OFL-DMSans.txt.
   fonts:
     - family: Jost
       fonts:
@@ -85,4 +84,16 @@ flutter:
         - asset: assets/fonts/Jost-600-Semi.ttf
           weight: 600
         - asset: assets/fonts/Jost-700-Bold.ttf
+          weight: 700
+    - family: DMSans
+      fonts:
+        - asset: assets/fonts/DMSans-300-Light.ttf
+          weight: 300
+        - asset: assets/fonts/DMSans-400-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/DMSans-500-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/DMSans-600-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/DMSans-700-Bold.ttf
           weight: 700

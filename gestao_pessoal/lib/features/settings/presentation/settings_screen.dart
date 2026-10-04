@@ -1,4 +1,3 @@
-import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,985 +7,353 @@ import '../../../core/widgets/liquid_glass_card.dart';
 import '../../../core/widgets/screen_header.dart';
 import '../data/settings_controller.dart';
 import '../domain/app_settings.dart';
+import 'widgets/color_picker_dialog.dart';
+import 'widgets/notification_settings_card.dart';
+import 'widgets/settings_tiles.dart';
+import 'widgets/style_preview.dart';
 
+/// Configurações: estilo visual, fundo (Liquid Glass), cores, feedback e
+/// cores do timer. Cada bloco é um widget pequeno em `widgets/`.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
-  Color _hexToColor(String hex) {
-    final clean = hex.replaceAll('#', '');
-    return Color(int.parse('FF$clean', radix: 16));
-  }
-
-  String _colorToHex(Color color) {
-    final value = color.toARGB32();
-    return '#${(value & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
-  }
-
-  Future<void> _openColorPicker(BuildContext context, WidgetRef ref) async {
-    final current = _hexToColor(ref.read(settingsProvider).wallpaperSeed);
-    final picked = await showDialog<Color>(
-      context: context,
-      builder: (_) => _PickerDialog(initial: current),
-    );
-    if (picked != null) {
-      await ref
-          .read(settingsProvider.notifier)
-          .updateWallpaperSeed(_colorToHex(picked));
-    }
-  }
-
-  /// Abre o color picker genérico para qualquer campo que recebe HEX.
-  Future<void> _openColorPickerForField(
+  /// Abre o seletor de cor e grava o resultado com [save].
+  Future<void> _pick(
     BuildContext context,
-    WidgetRef ref,
     String currentHex,
-    Future<void> Function(String) onPicked,
+    Future<void> Function(String hex) save,
   ) async {
-    final picked = await showDialog<Color>(
-      context: context,
-      builder: (_) => _PickerDialog(initial: _hexToColor(currentHex)),
-    );
-    if (picked != null) {
-      await onPicked(_colorToHex(picked));
-    }
+    final hex = await pickColorHex(context, currentHex);
+    if (hex != null) await save(hex);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
-    final seedColor = _hexToColor(settings.wallpaperSeed);
-    final glass = settings.style.isGlass;
+    final palette = context.palette;
 
     return Scaffold(
-        backgroundColor: Colors.transparent,
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         bottom: false,
         child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
-        children: [
-          ScreenHeader(
-            eyebrow: 'Ajuste do seu jeito',
-            title: 'Configurações',
-            onBack: () => context.go('/'),
-            padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
-          ),
-          const _SectionHeader('Estilo visual'),
-          Row(
-            children: [
-              for (final style in AppStyle.values) ...[
-                if (style != AppStyle.values.first) const SizedBox(width: 12),
-                Expanded(
-                  child: _StylePreview(
-                    style: style,
-                    selected: settings.style == style,
-                    onTap: () => notifier.updateStyle(style),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 120),
+          children: [
+            ScreenHeader(
+              eyebrow: 'Ajuste do seu jeito',
+              title: 'Configurações',
+              onBack: () => context.go('/'),
+              padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+            ),
+
+            // === Estilo visual ===
+            const SettingsSectionHeader('Estilo visual'),
+            Row(
+              children: [
+                for (final style in AppStyle.values) ...[
+                  if (style != AppStyle.values.first) const SizedBox(width: 12),
+                  Expanded(
+                    child: StylePreview(
+                      style: style,
+                      selected: settings.style == style,
+                      onTap: () => notifier.updateStyle(style),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              settings.style.description,
+              style: TextStyle(color: palette.textSecondary, fontSize: 13),
+            ),
+
+            // === Fundo e texto (só no Liquid Glass) ===
+            if (settings.style.isGlass) ...[
+              const SettingsSectionHeader('Fundo'),
+              _WallpaperModeCard(
+                mode: settings.wallpaperMode,
+                onChanged: notifier.updateWallpaperMode,
+              ),
+              const SizedBox(height: 12),
+              if (settings.wallpaperMode == WallpaperMode.animated) ...[
+                ColorSettingCard(
+                  title: 'Cor do papel de parede',
+                  description: 'Define a cor-base dos blobs animados no fundo.',
+                  hex: settings.wallpaperSeed,
+                  onPick: () => _pick(
+                    context,
+                    settings.wallpaperSeed,
+                    notifier.updateWallpaperSeed,
                   ),
                 ),
-              ],
+                const SizedBox(height: 12),
+                _BlobIntensityCard(
+                  value: settings.blobIntensity,
+                  onChanged: notifier.updateBlobIntensity,
+                ),
+              ] else
+                ColorSettingCard(
+                  title: 'Cor do fundo',
+                  description:
+                      'Escolha uma cor única sólida para todo o fundo da tela.',
+                  hex: settings.wallpaperSolidColor,
+                  onPick: () => _pick(
+                    context,
+                    settings.wallpaperSolidColor,
+                    notifier.updateWallpaperSolidColor,
+                  ),
+                ),
+              const SizedBox(height: 12),
+              ColorSettingCard(
+                title: 'Cor do texto',
+                description: 'Personaliza a cor das letras do app inteiro.',
+                hex: settings.textColor,
+                onPick: () => _pick(
+                  context,
+                  settings.textColor,
+                  notifier.updateTextColor,
+                ),
+                onReset: notifier.resetTextColor,
+                resetMessage: 'Cor do texto restaurada',
+              ),
             ],
-          ),
-          const SizedBox(height: 8),
+
+            // === Cores ===
+            const SettingsSectionHeader('Cores'),
+            ColorSettingCard(
+              title: 'Cor de destaque',
+              description: 'Usada no botão +, números grandes, prioridade '
+                  'alta, conclusões, aba ativa e formas do fundo.',
+              hex: settings.accentColor,
+              onPick: () => _pick(
+                context,
+                settings.accentColor,
+                notifier.updateAccentColor,
+              ),
+              onReset: notifier.resetAccentColor,
+              resetMessage: 'Cor de destaque restaurada',
+            ),
+
+            // === Geral ===
+            const SettingsSectionHeader('Geral'),
+            LiquidGlassCard(
+              child: Column(
+                children: [
+                  _SwitchTile(
+                    value: settings.hapticsEnabled,
+                    onChanged: notifier.updateHapticsEnabled,
+                    title: 'Vibração ao tocar',
+                    subtitle:
+                        'Feedback tátil em cliques e conclusões de tarefa/hábito',
+                  ),
+                  Divider(height: 1, color: palette.border),
+                  _SwitchTile(
+                    value: settings.soundEnabled,
+                    onChanged: notifier.updateSoundEnabled,
+                    title: 'Som de conclusão',
+                    subtitle: 'Toca um "ding" ao concluir uma tarefa, um hábito '
+                        'ou uma sessão de foco',
+                  ),
+                ],
+              ),
+            ),
+
+            // === Notificações ===
+            const SettingsSectionHeader('Notificações'),
+            const NotificationSettingsCard(),
+
+            // === Timer de foco ===
+            const SettingsSectionHeader('Timer de foco'),
+            LiquidGlassCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Cores do ciclo Pomodoro',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: palette.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Toque para personalizar o anel de cada modo.',
+                    style: TextStyle(color: palette.textSecondary, fontSize: 12),
+                  ),
+                  const SizedBox(height: 16),
+                  ColorRow(
+                    label: 'Foco',
+                    hex: settings.pomodoroFocusColor,
+                    onTap: () => _pick(
+                      context,
+                      settings.pomodoroFocusColor,
+                      notifier.updatePomodoroFocusColor,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ColorRow(
+                    label: 'Pausa curta',
+                    hex: settings.pomodoroShortBreakColor,
+                    onTap: () => _pick(
+                      context,
+                      settings.pomodoroShortBreakColor,
+                      notifier.updatePomodoroShortBreakColor,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ColorRow(
+                    label: 'Pausa longa',
+                    hex: settings.pomodoroLongBreakColor,
+                    onTap: () => _pick(
+                      context,
+                      settings.pomodoroLongBreakColor,
+                      notifier.updatePomodoroLongBreakColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // === Restaurar tudo ===
+            Center(
+              child: TextButton.icon(
+                onPressed: () async {
+                  await notifier.resetDefaults();
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Configurações restauradas')),
+                    );
+                  }
+                },
+                icon: Icon(Icons.restart_alt, color: palette.textSecondary),
+                label: Text(
+                  'Restaurar padrões',
+                  style: TextStyle(color: palette.textSecondary),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Animado × sólido (Liquid Glass).
+class _WallpaperModeCard extends StatelessWidget {
+  const _WallpaperModeCard({required this.mode, required this.onChanged});
+
+  final WallpaperMode mode;
+  final ValueChanged<WallpaperMode> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    return LiquidGlassCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            settings.style.description,
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
-          ),
-
-          if (glass) ...[
-          const _SectionHeader('Fundo'),
-          // Modo do fundo (animado / sólido)
-          LiquidGlassCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Estilo do fundo',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  settings.wallpaperMode.description,
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                SegmentedButton<WallpaperMode>(
-                  segments: [
-                    for (final m in WallpaperMode.values)
-                      ButtonSegment<WallpaperMode>(
-                        value: m,
-                        label: Text(m.label),
-                        icon: Icon(
-                          m == WallpaperMode.animated
-                              ? Icons.auto_awesome_outlined
-                              : Icons.format_color_fill_outlined,
-                        ),
-                      ),
-                  ],
-                  selected: {settings.wallpaperMode},
-                  onSelectionChanged: (sel) =>
-                      notifier.updateWallpaperMode(sel.first),
-                ),
-              ],
+            'Estilo do fundo',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: palette.textPrimary,
             ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            mode.description,
+            style: TextStyle(color: palette.textSecondary, fontSize: 12),
           ),
           const SizedBox(height: 12),
-
-          // === Configuração específica do modo ativo ===
-          if (settings.wallpaperMode == WallpaperMode.animated) ...[
-            LiquidGlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Cor do papel de parede',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Define a cor-base dos blobs animados no fundo.',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: seedColor,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: AppColors.glassBorder,
-                            width: 1.5,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              settings.wallpaperSeed,
-                              style: TextStyle(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              'Toque para alterar',
-                              style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      FilledButton(
-                        onPressed: () => _openColorPicker(context, ref),
-                        child: const Text('Escolher'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            // Intensidade dos blobs
-            LiquidGlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Intensidade dos blobs',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        '${(settings.blobIntensity * 100).round()}%',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Slider(
-                    value: settings.blobIntensity,
-                    min: 0,
-                    max: 0.7,
-                    divisions: 14,
-                    onChanged: notifier.updateBlobIntensity,
-                  ),
-                ],
-              ),
-            ),
-          ] else ...[
-            // === MODO SÓLIDO ===
-            LiquidGlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Cor do fundo',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Escolha uma cor única sólida para todo o fundo da tela.',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: _hexToColor(settings.wallpaperSolidColor),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: AppColors.glassBorder,
-                            width: 1.5,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              settings.wallpaperSolidColor,
-                              style: TextStyle(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            Text(
-                              'Toque para alterar',
-                              style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      FilledButton(
-                        onPressed: () => _openColorPickerForField(
-                          context,
-                          ref,
-                          settings.wallpaperSolidColor,
-                          notifier.updateWallpaperSolidColor,
-                        ),
-                        child: const Text('Escolher'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-          const SizedBox(height: 12),
-
-          // === Cor do texto (só no Liquid Glass) ===
-          LiquidGlassCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Cor do texto',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+          SegmentedButton<WallpaperMode>(
+            segments: [
+              for (final m in WallpaperMode.values)
+                ButtonSegment<WallpaperMode>(
+                  value: m,
+                  label: Text(m.label),
+                  icon: Icon(
+                    m == WallpaperMode.animated
+                        ? Icons.auto_awesome_outlined
+                        : Icons.format_color_fill_outlined,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Personaliza a cor das letras do app inteiro.',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: _hexToColor(settings.textColor),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: AppColors.glassBorder,
-                          width: 1.5,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            settings.textColor,
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            'Toque para alterar',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    FilledButton(
-                      onPressed: () => _openColorPickerForField(
-                        context,
-                        ref,
-                        settings.textColor,
-                        notifier.updateTextColor,
-                      ),
-                      child: const Text('Escolher'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton.icon(
-                    onPressed: () async {
-                      await notifier.resetTextColor();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Cor do texto restaurada'),
-                          ),
-                        );
-                      }
-                    },
-                    icon: Icon(Icons.restart_alt,
-                        color: AppColors.textSecondary, size: 18),
-                    label: Text(
-                      'Restaurar padrão',
-                      style: TextStyle(color: AppColors.textSecondary),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          ],
-          const _SectionHeader('Cores'),
-
-          // === Cor de destaque (accent) — customizada pelo usuário ===
-          LiquidGlassCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Cor de destaque',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Usada no botão +, números grandes, prioridade alta, '
-                  'conclusões, aba ativa e formas do fundo.',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: _hexToColor(settings.accentColor),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: AppColors.glassBorder,
-                          width: 1.5,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            settings.accentColor,
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Text(
-                            'Toque para alterar',
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    FilledButton(
-                      onPressed: () => _openColorPickerForField(
-                        context,
-                        ref,
-                        settings.accentColor,
-                        notifier.updateAccentColor,
-                      ),
-                      child: const Text('Escolher'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton.icon(
-                    onPressed: () async {
-                      await notifier.resetAccentColor();
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Cor de destaque restaurada'),
-                          ),
-                        );
-                      }
-                    },
-                    icon: Icon(Icons.restart_alt,
-                        color: AppColors.textSecondary, size: 18),
-                    label: Text(
-                      'Restaurar padrão',
-                      style: TextStyle(color: AppColors.textSecondary),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const _SectionHeader('Geral'),
-          LiquidGlassCard(
-            child: Column(
-              children: [
-                SwitchListTile.adaptive(
-                  value: settings.hapticsEnabled,
-                  onChanged: notifier.updateHapticsEnabled,
-                  title: Text(
-                    'Vibração ao tocar',
-                    style: TextStyle(color: AppColors.textPrimary),
-                  ),
-                  subtitle: Text(
-                    'Feedback tátil em cliques e conclusões de tarefa/hábito',
-                    style: TextStyle(color: AppColors.textSecondary),
-                  ),
-                ),
-                Divider(
-                  height: 1,
-                  color: AppColors.glassBorder,
-                ),
-                SwitchListTile.adaptive(
-                  value: settings.soundEnabled,
-                  onChanged: notifier.updateSoundEnabled,
-                  title: Text(
-                    'Som de conclusão',
-                    style: TextStyle(color: AppColors.textPrimary),
-                  ),
-                  subtitle: Text(
-                    'Toca um "ding" ao concluir uma tarefa ou hábito',
-                    style: TextStyle(color: AppColors.textSecondary),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const _SectionHeader('Timer de foco'),
-          LiquidGlassCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Cores do ciclo Pomodoro',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Toque para personalizar o anel de cada modo.',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _ColorRow(
-                  label: 'Foco',
-                  color: settings.pomodoroFocusColor,
-                  onTap: () => _openColorPickerForField(
-                    context,
-                    ref,
-                    settings.pomodoroFocusColor,
-                    notifier.updatePomodoroFocusColor,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _ColorRow(
-                  label: 'Pausa curta',
-                  color: settings.pomodoroShortBreakColor,
-                  onTap: () => _openColorPickerForField(
-                    context,
-                    ref,
-                    settings.pomodoroShortBreakColor,
-                    notifier.updatePomodoroShortBreakColor,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _ColorRow(
-                  label: 'Pausa longa',
-                  color: settings.pomodoroLongBreakColor,
-                  onTap: () => _openColorPickerForField(
-                    context,
-                    ref,
-                    settings.pomodoroLongBreakColor,
-                    notifier.updatePomodoroLongBreakColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Reset
-          Center(
-            child: TextButton.icon(
-              onPressed: () async {
-                await notifier.resetDefaults();
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Configurações restauradas'),
-                    ),
-                  );
-                }
-              },
-              icon: Icon(Icons.restart_alt, color: AppColors.textSecondary),
-              label: Text(
-                'Restaurar padrões',
-                style: TextStyle(color: AppColors.textSecondary),
-              ),
-            ),
+            ],
+            selected: {mode},
+            onSelectionChanged: (sel) => onChanged(sel.first),
           ),
         ],
       ),
-      ),
     );
   }
 }
 
-/// Miniatura clicável de um estilo visual (Editorial / Liquid Glass).
-class _StylePreview extends StatelessWidget {
-  const _StylePreview({
-    required this.style,
-    required this.selected,
-    required this.onTap,
-  });
+/// Intensidade (opacidade) dos blobs animados.
+class _BlobIntensityCard extends StatelessWidget {
+  const _BlobIntensityCard({required this.value, required this.onChanged});
 
-  final AppStyle style;
-  final bool selected;
-  final VoidCallback onTap;
+  final double value;
+  final ValueChanged<double> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final p = AppPalette.of(style);
-    final accent = Color(
-      int.parse('FF${style.defaultAccentHex.replaceAll('#', '')}', radix: 16),
-    );
-    final t = Theme.of(context).textTheme;
-    final ring = selected
-        ? Theme.of(context).colorScheme.primary
-        : AppColors.border;
-
-    return Semantics(
-      button: true,
-      selected: selected,
-      label: 'Estilo ${style.label}',
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          padding: const EdgeInsets.all(4),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: ring, width: selected ? 2 : 1),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    final palette = context.palette;
+    return LiquidGlassCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(18),
-                child: AspectRatio(
-                  aspectRatio: 0.82,
-                  child: Stack(
-                    children: [
-                      Positioned.fill(child: ColoredBox(color: p.background)),
-                      if (style.isGlass) ...[
-                        Positioned(
-                          left: -30,
-                          top: -20,
-                          child: _Blob(color: accent, size: 120),
-                        ),
-                        Positioned(
-                          right: -40,
-                          bottom: -10,
-                          child: _Blob(
-                            color: const Color(0xFF38BDF8),
-                            size: 120,
-                          ),
-                        ),
-                      ] else ...[
-                        Positioned(
-                          right: -36,
-                          top: -30,
-                          child: _Disc(color: accent, size: 110),
-                        ),
-                        Positioned(
-                          left: -24,
-                          bottom: -24,
-                          child: _Disc(color: accent, size: 64),
-                        ),
-                      ],
-                      // Mini "card" com linhas de texto
-                      Positioned(
-                        left: 12,
-                        right: 12,
-                        bottom: 14,
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: style.isGlass
-                                ? Colors.white.withValues(alpha: 0.14)
-                                : p.panel,
-                            borderRadius: BorderRadius.circular(12),
-                            border: style.isGlass
-                                ? Border.all(
-                                    color: Colors.white.withValues(alpha: 0.3),
-                                  )
-                                : null,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '07',
-                                style: TextStyle(
-                                  color: accent,
-                                  fontSize: 26,
-                                  height: 1,
-                                  fontWeight: style.isGlass
-                                      ? FontWeight.w700
-                                      : FontWeight.w300,
-                                  fontFamily: style.isGlass ? null : 'Jost',
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              for (final w in const [0.9, 0.6])
-                                FractionallySizedBox(
-                                  widthFactor: w,
-                                  child: Container(
-                                    height: 4,
-                                    margin: const EdgeInsets.only(bottom: 4),
-                                    decoration: BoxDecoration(
-                                      color: p.onPanel.withValues(alpha: 0.6),
-                                      borderRadius: BorderRadius.circular(2),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+              Text(
+                'Intensidade dos blobs',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: palette.textPrimary,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 10, 8, 6),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        style.label,
-                        style: t.titleSmall?.copyWith(
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 200),
-                      opacity: selected ? 1 : 0,
-                      child: Icon(
-                        Icons.check_circle,
-                        size: 18,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ],
-                ),
+              Text(
+                '${(value * 100).round()}%',
+                style: TextStyle(color: palette.textSecondary),
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Disc extends StatelessWidget {
-  const _Disc({required this.color, required this.size});
-  final Color color;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-      );
-}
-
-class _Blob extends StatelessWidget {
-  const _Blob({required this.color, required this.size});
-  final Color color;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: [color.withValues(alpha: 0.75), color.withValues(alpha: 0)],
+          Slider(
+            value: value,
+            max: 0.7,
+            divisions: 14,
+            onChanged: onChanged,
           ),
-        ),
-      );
+        ],
+      ),
+    );
+  }
 }
 
-class _ColorRow extends StatelessWidget {
-  const _ColorRow({
-    required this.label,
-    required this.color,
-    required this.onTap,
+class _SwitchTile extends StatelessWidget {
+  const _SwitchTile({
+    required this.value,
+    required this.onChanged,
+    required this.title,
+    required this.subtitle,
   });
-  final String label;
-  final String color;
-  final VoidCallback onTap;
 
-  Color _hexToColor(String hex) {
-    final clean = hex.replaceAll('#', '');
-    return Color(int.parse('FF$clean', radix: 16));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: _hexToColor(color),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: AppColors.glassBorder,
-                  width: 1.5,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            Icon(Icons.tune, color: AppColors.textTertiary, size: 18),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader(this.title);
+  final bool value;
+  final ValueChanged<bool> onChanged;
   final String title;
+  final String subtitle;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 28, 4, 12),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              color: AppColors.textPrimary,
-            ),
-      ),
-    );
-  }
-}
-
-class _PickerDialog extends StatefulWidget {
-  const _PickerDialog({required this.initial});
-  final Color initial;
-
-  @override
-  State<_PickerDialog> createState() => _PickerDialogState();
-}
-
-class _PickerDialogState extends State<_PickerDialog> {
-  late Color _current;
-
-  @override
-  void initState() {
-    super.initState();
-    _current = widget.initial;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.all(16),
-      child: LiquidGlassCard(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Escolha uma cor',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            // ColorPicker da flex_color_picker
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.6,
-              ),
-              child: SingleChildScrollView(
-                child: ColorPicker(
-                  color: _current,
-                  onColorChanged: (c) => _current = c,
-                  width: 38,
-                  height: 38,
-                  borderRadius: 19,
-                  spacing: 4,
-                  runSpacing: 4,
-                  wheelDiameter: 160,
-                  heading: Text(
-                    'Selecione',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                  ),
-                  subheading: Text(
-                    'Cor',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                  ),
-                  wheelSubheading: Text(
-                    'Tom',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                  ),
-                  showMaterialName: false,
-                  showColorName: false,
-                  showColorCode: true,
-                  copyPasteBehavior: const ColorPickerCopyPasteBehavior(
-                    copyButton: false,
-                    pasteButton: false,
-                    longPressMenu: false,
-                  ),
-                  pickersEnabled: const {
-                    ColorPickerType.wheel: true,
-                    ColorPickerType.primary: true,
-                    ColorPickerType.accent: false,
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancelar'),
-                ),
-                const SizedBox(width: 8),
-                FilledButton(
-                  onPressed: () => Navigator.pop(context, _current),
-                  child: const Text('Aplicar'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    final palette = context.palette;
+    return SwitchListTile.adaptive(
+      value: value,
+      onChanged: onChanged,
+      title: Text(title, style: TextStyle(color: palette.textPrimary)),
+      subtitle: Text(subtitle, style: TextStyle(color: palette.textSecondary)),
     );
   }
 }

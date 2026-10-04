@@ -5,8 +5,11 @@
 class PrefsKeys {
   PrefsKeys._();
 
-  static const String habits = 'daily_flow.habits';
-  static const String tasks = 'daily_flow.tasks';
-  static const String pomodoroSessions = 'daily_flow.pomodoro_sessions';
-  static const String settings = 'daily_flow.settings';
+  static const String habits = 'ritmo.habits';
+  static const String tasks = 'ritmo.tasks';
+  static const String pomodoroSessions = 'ritmo.pomodoro_sessions';
+  static const String settings = 'ritmo.settings';
+  static const String reminderSnoozes = 'ritmo.reminder_snoozes';
+  static const String notificationPermissionAsked =
+      'ritmo.notification_permission_asked';
 }

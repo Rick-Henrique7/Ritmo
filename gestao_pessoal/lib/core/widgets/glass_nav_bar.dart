@@ -1,9 +1,7 @@
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../features/settings/data/settings_controller.dart';
 import '../constants/app_colors.dart';
 
 /// Item de navegação com rótulo + ícone.
@@ -47,7 +45,7 @@ class GlassNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final glass = AppColors.isGlass;
+    final glass = context.palette.isGlass;
     final radius = BorderRadius.circular(999);
 
     final row = Padding(
@@ -68,7 +66,7 @@ class GlassNavBar extends StatelessWidget {
         ? ClipRRect(
             borderRadius: radius,
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   borderRadius: radius,
@@ -84,7 +82,7 @@ class GlassNavBar extends StatelessWidget {
         : DecoratedBox(
             decoration: BoxDecoration(
               borderRadius: radius,
-              color: AppColors.panel,
+              color: context.palette.panel,
             ),
             child: row,
           );
@@ -96,7 +94,7 @@ class GlassNavBar extends StatelessWidget {
   }
 }
 
-class _NavButton extends ConsumerWidget {
+class _NavButton extends StatelessWidget {
   const _NavButton({
     required this.item,
     required this.active,
@@ -107,11 +105,11 @@ class _NavButton extends ConsumerWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final accent = ref.watch(accentColorProvider);
-    final glass = AppColors.isGlass;
-    final idle = glass ? AppColors.textSecondary : AppColors.onPanelMuted;
-    final color = active ? (glass ? AppColors.textPrimary : accent) : idle;
+  Widget build(BuildContext context) {
+    final accent = Theme.of(context).colorScheme.primary;
+    final glass = context.palette.isGlass;
+    final idle = glass ? context.palette.textSecondary : context.palette.onPanelMuted;
+    final color = active ? (glass ? context.palette.textPrimary : accent) : idle;
 
     return Expanded(
       child: Semantics(
@@ -148,7 +146,7 @@ class _NavButton extends ConsumerWidget {
                     height: 5,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: glass ? AppColors.textPrimary : accent,
+                      color: glass ? context.palette.textPrimary : accent,
                     ),
                   ),
                 ],

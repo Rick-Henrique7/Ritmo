@@ -1,5 +1,10 @@
 # UI & Feature Spec — Tela de Dashboard (Hoje)
 
+> **Visão original de interface.** O que está implementado hoje, com status e
+> critérios de aceite, está em [requisitos funcionais](requisitos/funcionais.md).
+> Itens desta spec que não aparecem lá como ✅ estão no backlog ou foram
+> descartados.
+
 > **Objetivo:** Oferecer um panorama imediato do dia do usuário, combinando
 > hábitos, tarefas e estatísticas com foco em alta legibilidade e apelo visual.
 

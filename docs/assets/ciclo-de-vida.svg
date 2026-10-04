@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860" role="img" aria-labelledby="t d">
-<title id="t">Ciclo de vida de desenvolvimento do Daily Flow</title><desc id="d">Seis fases em ciclo: planejar, projetar, implementar, testar, revisar e integrar, lançar; o feedback do lançamento volta para o planejamento.</desc>
+<title id="t">Ciclo de vida de desenvolvimento do Ritmo</title><desc id="d">Seis fases em ciclo: planejar, projetar, implementar, testar, revisar e integrar, lançar; o feedback do lançamento volta para o planejamento.</desc>
 <defs>
   <pattern id="zig" width="9" height="7" patternUnits="userSpaceOnUse">
     <path d="M0 4.5 L2.25 1.5 L4.5 4.5 L6.75 1.5 L9 4.5" fill="none" stroke="#2E2D2B" stroke-width="1" stroke-opacity=".6"/>
@@ -18,7 +18,7 @@
 </style>
 <rect width="1200" height="860" fill="#EDE5D8"/>
 <circle cx="1170" cy="30" r="150" fill="#E4553F"/><circle cx="1080" cy="130" r="120" fill="none" stroke="#2E2D2B" stroke-opacity=".5"/><circle cx="80" cy="790" r="64" fill="url(#zig)"/><line x1="48" y1="40" x2="608" y2="40" stroke="#2E2D2B" stroke-opacity=".55"/>
-<text x="48" y="67" class="eyebrow">Daily Flow · engenharia</text>
+<text x="48" y="67" class="eyebrow">Ritmo · engenharia</text>
 <line x1="48" y1="80" x2="608" y2="80" stroke="#2E2D2B" stroke-opacity=".55"/>
 <text x="48" y="114" class="eyebrow" style="font-weight:300;font-size:17px">Como o app é construído</text>
 <text x="48" y="150" class="title">Ciclo de vida de desenvolvimento</text>

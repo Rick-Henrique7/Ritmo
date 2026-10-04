@@ -8,8 +8,9 @@ import '../domain/subtask_model.dart';
 import '../domain/task_model.dart';
 import '../domain/task_schedule.dart';
 
-export '../domain/task_schedule.dart' show TaskFilter, TaskSchedule;
 import 'prefs_tasks_repository.dart';
+
+export '../domain/task_schedule.dart' show TaskFilter, TaskSchedule;
 
 const _uuid = Uuid();
 

@@ -1,5 +1,10 @@
 # UI & Feature Spec — Tela de Timer de Foco (Pomodoro)
 
+> **Visão original de interface.** O que está implementado hoje, com status e
+> critérios de aceite, está em [requisitos funcionais](requisitos/funcionais.md).
+> Itens desta spec que não aparecem lá como ✅ estão no backlog ou foram
+> descartados.
+
 > **Objetivo:** Proporcionar um ambiente imersivo e livre de distrações para a
 > execução das tarefas, utilizando a técnica Pomodoro (ciclos de trabalho
 > focados seguidos de pausas) com um design minimalista e agradável.

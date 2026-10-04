@@ -1,396 +1,141 @@
 <div align="center">
 
-<!-- =========================== BANNER =========================== -->
+<img src="gestao_pessoal/assets/icons/ritmo_icon.png" style="border-radius:20px" alt="Ícone do Ritmo" width="112">
 
-<pre>
- ╔══════════════════════════════════════════════════════════════════╗
- ║                                                                  ║
- ║   ██████╗  █████╗ ██╗██╗  ██╗   ██╗   ██╗   ██████╗ ██╗    ██╗   ║
- ║   ██╔══██╗██╔══██╗██║██║  ╚██╗ ██╔╝   ██║   ██╔══██╗██║    ██║   ║
- ║   ██║  ██║███████║██║██║   ╚████╔╝    ██║   ██████╔╝██║ █╗ ██║   ║
- ║   ██║  ██║██╔══██║██║██║    ╚██╔╝     ██║   ██╔══██╗██║███╗██║   ║
- ║   ██████╔╝██║  ██║██║███████╗██║      ███████╗██║  ██║╚███╔███╔╝  ║
- ║   ╚═════╝ ╚═╝  ╚═╝╚═╝╚══════╝╚═╝      ╚══════╝╚═╝  ╚═╝ ╚══╝╚══╝   ║
- ║                                                                  ║
- ║              Daily · Flow  —  Dark fintech routine               ║
- ║                                                                  ║
- ╚══════════════════════════════════════════════════════════════════╝
-</pre>
+# Ritmo
 
-<!-- =========================== BADGES ============================ -->
+**Hábitos, tarefas e foco em um app só — offline, sem conta, sem anúncios.**
 
-![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-3.11+-0175C2?logo=dart&logoColor=white)
-![Platform](https://img.shields.io/badge/Platforms-Android%20%7C%20Web-FF6F61)
-![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)
-![Repo](https://img.shields.io/badge/GitHub-Rick--Henrique7-181717?logo=github)
-![Design](https://img.shields.io/badge/Design-Dark%2FGreen%20System-00E676?style=flat-square)
-![Font](https://img.shields.io/badge/Font-DM%20Sans-8B5CF6)
-![State](https://img.shields.io/badge/State-Riverpod-2EA0A6?logo=flutter&logoColor=white)
-![Routing](https://img.shields.io/badge/Routing-go__router-FF6F61)
-![Storage](https://img.shields.io/badge/Storage-Offline%20First-34D399)
+*Android · em preparação para a Play Store*
 
-<!-- =============================================================== -->
+[![CI](https://github.com/Rick-Henrique7/Ritmo/actions/workflows/ci.yml/badge.svg)](https://github.com/Rick-Henrique7/Ritmo/actions/workflows/ci.yml)
+![Flutter](https://img.shields.io/badge/Flutter-3-02569B?logo=flutter&logoColor=white)
+![Dart](https://img.shields.io/badge/Dart-3.11-0175C2?logo=dart&logoColor=white)
+![Testes](https://img.shields.io/badge/testes-86-4F8A83)
+![Licença](https://img.shields.io/badge/licença-Apache_2.0-D9A441)
 
-**Aplicativo pessoal de gestão de rotina** com hábitos, tarefas,
-timer Pomodoro e estatísticas — visual **Dark/Green** flat (DM Sans),
-single accent neon green, sem glassmorphism, sem sombras, offline-first.
-
-[Características](#-características) •
-[Telas](#-screenshots) •
-[Arquitetura](#-arquitetura) •
-[Stack](#-stack) •
-[Design System](#-design-system) •
-[Como rodar](#-como-rodar) •
-[Build](#-build) •
-[Estrutura](#-estrutura)
+[O app](#o-app) · [Engenharia](#engenharia) · [Como rodar](#como-rodar) · [Documentação](docs/README.md)
 
 </div>
 
 ---
 
-## ✨ Características
+## O app
 
-### Hábitos
-- 🟢 **Calendário Syncfusion** com dias incompletos destacados em muted
-- 🟢 **Frequência semanal** customizável (S T Q Q S S D)
-- 🟢 **Estimativa de duração** por hábito (ex: "30 min" pra meditar)
-- 🟢 **Lembrete por horário** opcional
-- 🟢 **Streak** automático baseado em datas consecutivas
-- 🟢 **Marcar/desmarcar** por dia no calendário
-- 🟢 **Editar / Excluir** pelo diálogo (botão "Excluir" só aparece em modo edição, ao lado do "Cancelar")
-- 🟢 **Swipe-to-delete** com confirmação + "Desfazer"
+Uma tela responde "o que eu preciso fazer hoje e quanto já fiz". Tudo fica no
+aparelho: nenhum cadastro, nenhum dado enviado para fora.
 
-### Tarefas
-- ✅ **Prioridade** baixa/média/alta (escala verde→cinza)
-- ✅ **Data + hora + repetição semanal** por tarefa
-- ✅ **Sub-tarefas** com check individual
-- ✅ **Filtros**: Todas / Hoje / Próximas / Concluídas
-  - **Hoje** inclui pontuais com `dueDate == hoje` + recorrentes no dia + **ad-hoc** (sem data e sem recorrência — criadas "pra hoje")
-  - **Próximas** inclui pontuais futuras + atrasadas (ordenado por data; ad-hoc migrou pra "Hoje")
-  - **Todas** esconde concluídas com `dueDate` no passado (vão só pra "Concluídas")
-  - **Concluídas** lista todas, mais recentes primeiro
-- ✅ **Empty states contextuais** (ícone + dica por filtro)
-- ✅ **Editar tarefa** (tap no card)
-- ✅ **Swipe-to-delete** com aviso explícito de recorrência + "Desfazer"
+- **Hoje:** progresso do dia somando hábitos e tarefas, e conclusão em um
+  toque.
+- **Hábitos:** calendário mensal, frequência por dia da semana, sequência
+  calculada e dias perdidos em destaque.
+- **Tarefas:** pontuais ou recorrentes (a recorrente volta pendente no
+  próximo dia previsto), prioridade e abas Todas / Hoje / Próximas /
+  Concluídas. A tarefa não feita continua em Hoje com a marca "Atrasada";
+  a concluída sai da tela no dia seguinte.
+- **Foco:** Pomodoro 25 / 5 / 15 com ciclo automático. O tempo segue certo
+  mesmo com o app minimizado, e a tela fica acesa enquanto roda.
+- **Estatísticas:** tarefas concluídas, minutos de foco, gráfico por
+  semana / mês / ano e mapa de 8 semanas de hábitos.
+- **Avisos:** resumo da manhã, pendências da noite, horário de tarefas e
+  hábitos e fim do foco, com **Concluir** e **Adiar 1 h** na própria
+  notificação. Tudo agendado no aparelho, sem servidor.
+- **Dois estilos:** *Editorial* (papel creme, tinta grafite, coral) e
+  *Liquid Glass* (vidro translúcido), com cores personalizáveis.
 
-### Timer Pomodoro
-- ⏱️ **3 modos**: Foco (25min) / Pausa Curta (5min) / Pausa Longa (15min)
-- ⏱️ **Seletor de modo** com chips visuais
-- ⏱️ **Vincular a uma tarefa** específica
-- ⏱️ **Cores customizáveis** por modo (default = paleta verde)
-- ⏱️ **Auto-progressão**: a cada 4 focados → Pausa Longa
+<!--
+Capturas de tela: salve em docs/screenshots/ e descomente a tabela.
 
-### Configurações
-- ⚙️ **Papel de parede**: gradiente animado OU cor sólida (mais leve p/ bateria)
-- ⚙️ **Cor-base dos blobs** + intensidade (modo animado)
-- ⚙️ **Vibração ao tocar** (toggle on/off)
-- ⚙️ **Som de conclusão** (toggle on/off) — toca "ding" ao concluir
-- ⚙️ **Modo Escuro** fixo
-- ⚙️ **Restore defaults** one-click
+| Hoje | Hábitos | Tarefas | Foco |
+| --- | --- | --- | --- |
+| ![Hoje](docs/screenshots/hoje.png) | ![Hábitos](docs/screenshots/habitos.png) | ![Tarefas](docs/screenshots/tarefas.png) | ![Foco](docs/screenshots/foco.png) |
+-->
 
-### Cross-cutting
-- 📳 **Vibração** em conclusão de tarefa/hábito (configurável)
-- 🔔 **Som de sucesso** gerado por IA (assets/sounds/success.mp3)
-- 🎨 **Single accent**: neon green (#00E676) usado com parcimônia
-- 🌑 **Dark mode** nativo (per design system)
-- 🇧🇷 **pt-BR** nativo (via `flutter_localizations` + `intl`)
-- 💾 **Offline-first**: tudo em `SharedPreferences` (JSON)
-- 📱 **Persistência**: tasks/habits/sessions/settings sobrevivem restart
+## Engenharia
 
----
+O projeto começou como app pessoal e foi refatorado em
+[etapas documentadas](docs/refatoracao/README.md), a partir de uma
+[revisão de arquitetura](docs/refatoracao/revisao-de-arquitetura.md)
+guiada por SOLID e Clean Code.
 
-## 📸 Screenshots
+<img src="docs/assets/arquitetura-camadas.svg" alt="Arquitetura em camadas" width="720">
 
-> **Cole aqui seus screenshots** (ideal: 1280×720 ou maior).
-> Salve em `docs/screenshots/` e o link relativo funciona direto no GitHub.
+| | |
+| --- | --- |
+| **Arquitetura** | Por feature, com camadas `presentation` → `data` → `domain`. `core/` não depende de nenhuma feature, e o CI verifica essa regra. [Detalhes](docs/arquitetura.md) |
+| **Domínio puro** | Regras como "o que é de hoje", sequência de hábitos, estatísticas e ciclo do foco são funções puras, sem Flutter e sem I/O. [ADR 0004](docs/adr/0004-regras-de-dominio-puras.md) |
+| **Inversão de dependência** | Controllers dependem de interfaces de repositório. Armazenamento, relógio, som e vibração são injetados pelo Riverpod e trocados por fakes nos testes. |
+| **Testes** | 86 testes automatizados (80 unitários + 6 de widget), com data e relógio fixos. Cada bug corrigido tem um teste de regressão. [Estratégia](docs/qualidade/testes.md) |
+| **CI** | GitHub Actions a cada push e PR: análise estática, regras de arquitetura e testes com cobertura. |
+| **Decisões registradas** | 9 [ADRs](docs/adr/README.md): repositórios, paleta como `ThemeExtension`, timer pelo horário de término, notificações locais e outras. |
+| **Requisitos** | 47 funcionais e 10 não funcionais, com critérios de aceite, [casos de uso](docs/requisitos/casos-de-uso.md) e [matriz de rastreabilidade](docs/requisitos/rastreabilidade.md) até o teste. |
+| **Processo** | Branches por etapa, Conventional Commits, SemVer, CHANGELOG e critérios de pronto. [Ciclo de vida](docs/processo/ciclo-de-vida.md) |
 
-| Tela | Preview |
-|------|---------|
-| **Dashboard — Hoje no Radar** | ![Dashboard](docs/screenshots/01-dashboard.png) |
-| **Hábitos — Calendário + Lista** | ![Hábitos](docs/screenshots/02-habitos.png) |
-| **Tarefas — Filtros + Diálogo** | ![Tarefas](docs/screenshots/03-tarefas.png) |
-| **Pomodoro — Timer + Seletor** | ![Pomodoro](docs/screenshots/04-pomodoro.png) |
-| **Estatísticas** | ![Stats](docs/screenshots/05-stats.png) |
-| **Configurações** | ![Settings](docs/screenshots/06-settings.png) |
+Um exemplo do que a refatoração resolveu: o timer de foco atrasava quando o
+Android pausava o app em segundo plano. Agora ele guarda o horário de término
+e calcula o restante pelo relógio, e um teste com relógio falso prova isso
+sem esperar 25 minutos
+([ADR 0007](docs/adr/0007-timer-pelo-horario-de-termino.md)).
 
----
+Outro: as notificações nunca falam de algo já feito. Uma função pura calcula
+os avisos dos próximos 7 dias a partir do estado, e o app reagenda tudo a cada
+mudança, inclusive quando o usuário conclui pela própria notificação, que roda
+num isolate separado ([ADR 0009](docs/adr/0009-notificacoes-locais.md)).
 
-## 🏛️ Arquitetura
+### Stack
 
-O app adota **Clean Architecture + Feature-First**. Cada feature tem
-suas camadas isoladas (`presentation` / `data` / `domain`), e a `core/`
-compartilha widgets e utilitários. Estado é gerenciado por **Riverpod**
-(`NotifierProvider`) e a persistência fica em **`SharedPreferences`**
-com JSON — totalmente offline.
+Flutter · Dart 3 · Riverpod 2 · go_router · SharedPreferences (JSON) ·
+Syncfusion Calendar · flutter_local_notifications · liquid_glass_widgets ·
+audioplayers · wakelock_plus · GitHub Actions
 
-```text
-                              ┌───────────────────────────────────────┐
-                              │       Flutter App (gestao_pessoal)    │
-                              └───────────────────────────────────────┘
-                                                   │
-                ┌──────────────────────────────────┼──────────────────────────────────┐
-                │                                  │                                  │
-        ┌───────▼────────┐                ┌────────▼─────────┐               ┌───────▼────────┐
-        │  presentation/ │                │   presentation/  │               │  presentation/ │
-        │   Dashboard    │                │      Habits      │               │     Tasks      │
-        └───────┬────────┘                └────────┬─────────┘               └───────┬────────┘
-                │                                  │                                  │
-                │       ┌──────────────────┐       │       ┌──────────────────┐       │
-                │       │   presentation/  │       │       │   presentation/  │       │
-                │       │    Pomodoro      │       │       │      Stats       │       │
-                │       └────────┬─────────┘       │       └────────┬─────────┘       │
-                │                │                 │                │                 │
-                │                │ presentation/   │                │ presentation/   │
-                │                │   Settings      │                │   Settings      │
-                │                └────────┬────────┘                └────────┬────────┘
-                │                         │                                 │
-                └────────────┬────────────┼─────────────────────────────────┘
-                             │            │
-                  ┌──────────▼────────────▼─────────────┐
-                  │        core/  (compartilhado)       │
-                  │   ┌─────────────────────────────┐   │
-                  │   │  AppCard · AppNavBar · App   │   │
-                  │   │  InputField · SolidBackground│   │
-                  │   │  AnimatedBackground (opt)   │   │
-                  │   └─────────────────────────────┘   │
-                  │   constants · services · utils      │
-                  │   (DM Sans · 00E676 accent)          │
-                  └──────────────┬──────────────────────┘
-                                 │
-                  ┌──────────────▼──────────────────────┐
-                  │    Riverpod State (Notifiers)       │
-                  │   Tasks · Habits · Pomodoro ·        │
-                  │   Settings · Haptics · Sound         │
-                  └──────────────┬──────────────────────┘
-                                 │
-                  ┌──────────────▼──────────────────────┐
-                  │   Persistence (Offline-First)       │
-                  │  SharedPreferences  ←→  JSON Codec  │
-                  └─────────────────────────────────────┘
-```
+## Como rodar
 
-### Stack por camada
-
-| Camada | Responsabilidade | Tecnologias |
-|--------|------------------|-------------|
-| **UI (presentation)** | Telas, widgets, animações, navegação | Flutter · go_router · flutter_animate |
-| **State** | Estado global, regra de UI, persistência reativa | Riverpod 2 (`NotifierProvider`, `StateProvider`, `Provider`) |
-| **Domain** | Entidades imutáveis com `copyWith` + migração JSON | Dart puro (`TaskModel`, `HabitModel`, `SubtaskModel`, `PomodoroSessionModel`, `AppSettings`) |
-| **Data** | Repositórios, codecs JSON, leitura/escrita em prefs | SharedPreferences · `JsonCoders` |
-| **Native** | Notificações, vibração, wakelock, áudio | flutter_local_notifications · vibration · wakelock_plus · audioplayers |
-
----
-
-## 🧪 Stack
-
-| Categoria | Pacote | Uso |
-|-----------|--------|-----|
-| Framework | `flutter` 3.x / `dart` 3.11+ | UI |
-| Estado | `flutter_riverpod` ^2.5 | Notifiers reativos |
-| Roteamento | `go_router` ^14 | ShellRoute + AppShell |
-| Persistência | `shared_preferences` ^2.2 | Offline-first JSON |
-| Animações | `flutter_animate` ^4.5 | Fade/scale/shimmer |
-| Fontes | `google_fonts` ^6.2 | **DM Sans** (geometric sans-serif) |
-| Cores | `flex_color_picker` ^3.6 | Paleta + picker |
-| Calendário | `syncfusion_flutter_calendar` ^28.1 | Calendário mensal |
-| Áudio | `audioplayers` ^6.1 | Som de conclusão (`success.mp3`) |
-| Nativo | `flutter_local_notifications` ^18 / `wakelock_plus` ^1.2 / `vibration` ^2 | Lembretes · tela acesa · vibração |
-| Utils | `intl` ^0.20 / `uuid` ^4.5 | Datas · IDs |
-
----
-
-## 🎨 Design System
-
-Base: **"Financial App — Dark/Green"** (single accent, sem sombras).
-
-### Tokens de cor
-
-| Token | Valor | Uso |
-|-------|-------|-----|
-| `--color-background` | `#0D0D0D` | Fundo da tela |
-| `--color-surface` | `#141414` | Cards, nav bar, modais |
-| `--color-surface-2` | `#1C1C1C` | Inputs, nested elements |
-| `--color-foreground` | `#FFFFFF` | Texto primário |
-| `--color-muted-foreground` | `#B0B0B0` | Texto secundário (~9:1 sobre dark — WCAG AAA) |
-| `--color-tertiary-foreground` | `#8A8A8A` | Texto terciário/hint (~6:1 — WCAG AA) |
-| `--color-border` | `#1E1E1E` | Borda 1px low-contrast |
-| `--color-primary` | `#00E676` | **Único accent** (neon green) |
-| `--color-primary-muted` | `#1A3D2B` | Primary com opacity |
-| `--color-accent-dim` | `#00B85A` | Primary escurecido |
-| `--color-chart-bar-1/2` | `#0D2B1A` / `#1A4D2E` | Barras de gráfico |
-
-### Tipografia (DM Sans)
-
-| Token | px | Weight | Uso |
-|-------|----|--------|-----|
-| text-xs | 11 | 400 | Caption/meta |
-| text-sm | 13 | 400-600 | Label |
-| text-base | 15 | 400 | Body |
-| text-lg | 18 | 600 | H3 |
-| text-xl | 22 | 600 | H2 |
-| text-3xl | 36 | 700 | H1 |
-| text-4xl | 48 | 700 | Display |
-
-**Regra**: minimum weight 400, sem thin (100–300).
-
-### Radius
-
-| Token | px | Uso |
-|-------|----|-----|
-| `radius-sm` | 8 | Botões, tags, ícones |
-| `radius-md` | 16 | Cards (default) |
-| `radius-lg` | 24 | Modais, nav bar |
-| `radius-xl` | 32 | Screen-edge |
-
-### Regras estéticas
-
-**✓ Do**
-- Surface `#0D–#1C` (quase-preto, nunca puro)
-- Neon green **apenas** como accent único
-- Bold para valores importantes, medium p/ resto
-- Borders low-contrast (estrutura via profundidade, não linhas)
-- Round generous (mínimo 8px)
-- DM Sans (geometric sans-serif)
-
-**✗ Don't**
-- Backgrounds claros / light mode
-- Múltiplos accent colors
-- Drop shadows
-- Uppercase labels (sentence case only)
-- Font weights < 400
-- Gradientes entre hues (apenas opacity fades)
-- **Red/orange p/ estados negativos** (usar muted gray)
-
----
-
-## 🚀 Como rodar
-
-### Pré-requisitos
-
-- **Flutter SDK 3.x** (Dart `^3.11.5`) — [instalação](https://docs.flutter.dev/get-started/install)
-- **Java 17+** (recomendado Zulu 21) — para build Android
-- **Android SDK** (API 34+) — `ANDROID_HOME` apontando para a pasta
-
-### Instalação
+Pré-requisitos: [Flutter](https://docs.flutter.dev/get-started/install) 3
+(Dart ≥ 3.11) e Android SDK.
 
 ```bash
-# 1. Clonar
-git clone https://github.com/Rick-Henrique7/Daily-Flow.git
-cd Daily-Flow
-
-# 2. Dependências
-cd gestao_pessoal
+git clone https://github.com/Rick-Henrique7/Ritmo.git
+cd Ritmo/gestao_pessoal
 flutter pub get
-
-# 3. Analisar
-flutter analyze
-
-# 4. Rodar (com emulador/dispositivo conectado)
-flutter run
+flutter test        # 86 testes
+flutter run         # com um aparelho ou emulador conectado
 ```
 
-> 💡 **Dica**: o projeto usa Maven Wrapper opcional. Se você usa Maven do sistema, garanta `mvn --version` antes do build APK.
+Build de release: `flutter build appbundle --release`. Assinatura e
+publicação estão no [processo de release](docs/processo/ciclo-de-vida.md#4-processo-de-release-android).
 
----
-
-## 📦 Build
-
-```bash
-# 🌐 Web (release, gera build/web/)
-flutter build web --release --no-wasm-dry-run
-
-# 🤖 Android APK (release, gera build/app/outputs/flutter-apk/app-release.apk)
-flutter build apk --release
-
-# 🍎 iOS (precisa de macOS + Xcode)
-flutter build ios --release
-```
-
-Saídas:
+## Estrutura
 
 ```text
-build/web/                                          ← Web
-build/app/outputs/flutter-apk/app-release.apk       ← Android (~58 MB)
-build/ios/iphoneos/Runner.app                       ← iOS
+Ritmo/
+├── .github/workflows/ci.yml   integração contínua
+├── docs/                      requisitos, arquitetura, ADRs, testes, processo
+└── gestao_pessoal/            app Flutter
+    ├── lib/
+    │   ├── main.dart          composition root
+    │   ├── core/              tema, providers, serviços, widgets compartilhados
+    │   ├── shell/             casca do app: fundo, navegação, virada do dia, sincronização
+    │   ├── routing/
+    │   └── features/          hoje · hábitos · tarefas · foco · estatísticas · avisos · configurações
+    └── test/                  unitários, widget e fakes
 ```
 
----
+## Privacidade
 
-## 📂 Estrutura
+O Ritmo não tem conta, servidor, anúncios nem analytics, e não pede acesso à
+internet. Hábitos, tarefas e configurações ficam só no armazenamento do
+próprio celular.
 
-```text
-Daily-Flow/
-├── README.md                ← este arquivo
-├── docs/                    ← especificações em PT-BR
-│   ├── PRD.md
-│   ├── arquitect.md
-│   ├── design.md
-│   ├── dashboard.md
-│   ├── habitos.md
-│   ├── to-do.md
-│   ├── pomodoro.md
-│   └── estatistica.md
-└── gestao_pessoal/          ← projeto Flutter
-    ├── pubspec.yaml
-    ├── android/             ← app Android
-    ├── web/                 ← app Web (manifest, index.html, ícones PWA 192/512/1024 + maskable + favicon 256)
-    ├── assets/
-    │   ├── icons/daily_flow_icon.png   ← tridente minimalista em fundo branco (1024×1024)
-    │   └── sounds/success.mp3          ← som de conclusão
-    ├── scripts/             ← utilitários (PowerShell + Node)
-    └── lib/
-        ├── main.dart
-        ├── app.dart
-        ├── routing/         ← GoRouter + AppShell
-        ├── core/            ← widgets, constantes, utils, services, database
-        │   ├── constants/app_colors.dart  ← tokens do design system
-        │   ├── constants/app_theme.dart    ← DM Sans + tema dark
-        │   ├── widgets/liquid_glass_card.dart   ← agora flat dark (compat)
-        │   ├── widgets/glass_nav_bar.dart       ← agora flat dark (compat)
-        │   ├── widgets/glass_input_field.dart   ← agora flat dark (compat)
-        │   └── widgets/animated_background.dart ← solid + animated (opt)
-        └── features/        ← 1 pasta por feature
-            ├── dashboard/   ← presentation · controllers · data
-            ├── habits/      ← presentation · data · domain
-            ├── tasks/       ← presentation · data · domain
-            ├── pomodoro/    ← presentation · data · controllers
-            ├── stats/       ← presentation · controllers
-            └── settings/    ← presentation · data · domain
-```
+## Próximos passos
 
----
+- **Para publicar:** chave de upload e assinatura do release, política de
+  privacidade, ficha da loja e teste fechado na Play Store.
+- **Depois:** backup dos dados (exportar e importar), criação rápida pelo
+  **+** da tela Hoje e subtarefas no formulário.
 
-## 🧭 Roadmap
+[Backlog completo](docs/requisitos/README.md#3-backlog).
 
-- [ ] Sincronização em nuvem (opcional, opt-in)
-- [ ] Widgets de home screen (Android)
-- [ ] Relatórios exportáveis (CSV / PDF)
-- [ ] Backup/restore via arquivo `.json`
-- [ ] Subtarefas drag-and-drop
+## Licença
 
----
-
-## 🤝 Contribuindo
-
-1. Fork este repositório
-2. Crie uma branch para sua feature (`git checkout -b feat/minha-feature`)
-3. Commit suas mudanças (`git commit -m 'feat: minha feature'`)
-4. Push para a branch (`git push origin feat/minha-feature`)
-5. Abra um Pull Request
-
----
-
-## 📄 Licença
-
-Distribuído sob a licença **Apache 2.0**. Veja [`LICENSE`](LICENSE) para mais detalhes.
-
----
-
-<div align="center">
-
-Feito com 💜 por **[@Rick-Henrique7](https://github.com/Rick-Henrique7)**
-
-![Visitors](https://api.visitorbadge.io/api/visitors?path=Rick-Henrique7.Daily-Flow&label=views&color=00E676&style=flat-square)
-
-</div>
+[Apache 2.0](gestao_pessoal/LICENSE) · feito por
+[@Rick-Henrique7](https://github.com/Rick-Henrique7)

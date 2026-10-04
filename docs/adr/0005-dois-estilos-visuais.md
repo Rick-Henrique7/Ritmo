@@ -1,6 +1,6 @@
 # 0005 — Dois estilos visuais (Editorial e Liquid Glass)
 
-- **Status:** Aceito — com dívida técnica registrada
+- **Status:** Aceito — a dívida de cores foi resolvida pelo [ADR 0006](0006-paleta-como-theme-extension.md)
 - **Data:** 2026-10-01
 
 ## Contexto

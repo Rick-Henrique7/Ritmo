@@ -1,127 +1,74 @@
-# Módulo Visual — Liquid Glass Guidelines
+# Design visual
 
-> Diretrizes de UI/UX para o **Daily Flow**. Todos os componentes visuais
-> (cards, botões, barras de navegação) devem seguir estritamente o estilo
-> **Liquid Glass 3D / Skeuomorphic Glassmorphism**, com `BackdropFilter`
-> para desfoque de fundo, múltiplas `BoxShadow` profundas para simular
-> relevo realista no espaço 3D, gradientes iridescentes/suaves de fundo
-> e bordas finas com refletividade de luz (`Colors.white.withOpacity(0.5)`).
+> Os dois estilos do Ritmo e os tokens que os sustentam. No código:
+> `lib/core/constants/app_colors.dart` (paleta) e `app_theme.dart` (tema).
+> Decisões: [ADR 0005](adr/0005-dois-estilos-visuais.md) e
+> [ADR 0006](adr/0006-paleta-como-theme-extension.md).
 
----
+## 1. Dois estilos
 
-## 1. Atributos da Interface (UI Elements)
+| | **Editorial** (padrão) | **Liquid Glass** |
+| --- | --- | --- |
+| Ideia | Revista impressa: papel creme, tinta grafite, um coral de destaque | Noite azulada com vidro translúcido e brilho |
+| Fundo | Creme liso com formas geométricas (círculos, aro fino, hachura em zigue-zague) | Gradiente animado de "blobs" ou cor sólida, à escolha |
+| Superfícies | Papel um tom mais claro, borda fina | Vidro com desfoque, reflexo e borda clara (`liquid_glass_widgets`) |
+| Painel de destaque | Grafite com texto creme | Vidro mais opaco |
+| Tipografia | **Jost** (embutida), títulos em peso leve | **DM Sans**, títulos encorpados para ler sobre o vidro |
+| Destaque padrão | Coral `#E4553F` | Lilás `#A78BFA` |
+| Tema do sistema | claro | escuro |
 
-### 1.1 Refração & Transparência (Backdrop Filter)
+O usuário troca de estilo em Configurações. A mudança é animada, porque a
+paleta é interpolada pelo `AnimatedTheme`.
 
-- Uso do widget `BackdropFilter` com `ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0)` para gerar o efeito fosco.
-- Fundo dos cards em `Colors.white.withOpacity(0.15)` a `0.35` sobre superfícies neutras ilimitadas.
+## 2. Paleta (`AppPalette`)
 
-### 1.2 Bordas & Brilhos de Refratariedade (Glass Borders)
+Cada estilo é uma instância de `AppPalette`, uma `ThemeExtension` lida com
+`context.palette`. Os nomes dos papéis são os mesmos nos dois estilos; os
+valores mudam.
 
-- Bordas finas (**1.2px**) com gradientes em arco para simular a luz incidindo no vidro: `LinearGradient` variando de `Colors.white.withOpacity(0.6)` no topo/esquerda até `Colors.white.withOpacity(0.1)` no rodapé.
-- `BorderRadius.circular(24.0)` até `30.0` (formato pílula fluida).
+| Papel | Uso | Editorial | Liquid Glass |
+| --- | --- | --- | --- |
+| `background` | fundo da tela | `#EDE5D8` | `#0B0D1A` |
+| `surface` | cards | `#F6F0E6` | branco 10% |
+| `surface2` | chips, campos, trilhas | `#E3D9CA` | branco 14% |
+| `textPrimary` | títulos e números | `#2E2D2B` | `#FFFFFF` |
+| `textSecondary` | rótulos | `#6E685F` | `#BFC3DD` |
+| `textTertiary` | dicas, desabilitado | `#9C958A` | `#8E93B5` |
+| `border` | linhas finas | `#D3C8B8` | branco 20% |
+| `panel` / `onPanel` | painel de destaque | `#3B3A39` / `#F2EBE0` | branco 18% / `#FFFFFF` |
+| `decoration` | traço das formas do fundo | `#2E2D2B` | `#FFFFFF` |
 
-### 1.3 Sombras 3D Difusas e Projetadas (Multi-layered Drop Shadows)
+**Cor de destaque:** escolhida pelo usuário e lida com `context.accent`. Usada
+no botão +, números grandes, prioridade alta, conclusões e aba ativa. O texto
+sobre ela usa `AppColors.onColor`, que escolhe grafite ou branco pelo
+contraste.
 
-Combinação de duas ou três camadas de `BoxShadow` no mesmo container:
+**Cores do timer** (padrão, personalizáveis): Foco `#E4553F`, Pausa curta
+`#4F8A83`, Pausa longa `#D9A441`.
 
-- **Sombra interna/suave:** `BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 20, spreadRadius: 2, offset: Offset(0, 10))`.
-- **Sombra projetada difusa:** `BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 40, spreadRadius: 5, offset: Offset(10, 20))`.
+## 3. Espaçamento e forma
 
-### 1.4 Paleta de Cores e Gradientes Fluídos
+| Token | Valor |
+| --- | --- |
+| `space1` … `space10` | 4, 8, 12, 16, 20, 24, 32, 40 px (base 4) |
+| `radiusSm` · `radiusMd` · `radiusLg` · `radiusXl` | 8 · 16 · 24 · 32 px |
+| Botões | pílula (raio total) |
 
-- **Fundo base:** Off-white cremoso/prata suave (`#EFEFEF` a `#E0E5EC`) ou Dark Mode profundo translúcido.
-- **Cores de destaque em gradiente vítreo:**
-  - **Roxo Fluído:** `#8B5CF6` → `#C084FC`
-  - **Ciano/Verde Água:** `#06B6D4` → `#34D399`
-  - **Rosa/Iridescente:** `#F43F5E` → `#FB7185` → `#818CF8`
+## 4. Princípios
 
----
+- **Números como protagonistas.** O progresso do dia ("01 / 03") e a
+  sequência ocupam o topo, em tamanho de capa.
+- **Um destaque só.** A cor de destaque marca o que é ação ou conquista; o
+  resto fica na paleta neutra.
+- **Estado negativo sem alarme.** Dias perdidos e prioridade baixa usam tons
+  neutros, não vermelho.
+- **Resistente a fonte grande.** Números grandes usam `FittedBox`, e os
+  testes de widget rodam com uma fonte mais larga que a real.
+- **Feedback em toda conclusão.** Vibração leve e som, ambos desligáveis.
 
-## 2. Exemplo de Componente Flutter (Liquid Glass Card)
+## 5. Ícone
 
-```dart
-import 'dart:ui';
-import 'package:flutter/material.dart';
-
-class LiquidGlassCard extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry padding;
-
-  const LiquidGlassCard({
-    super.key,
-    required this.child,
-    this.padding = const EdgeInsets.all(20),
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          // Sombra projetada difusa
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 30,
-            spreadRadius: 2,
-            offset: const Offset(12, 18),
-          ),
-          // Sombra suave de profundidade
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(-5, -5),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-          child: Container(
-            padding: padding,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              // Cor de preenchimento do vidro translúcido
-              color: Colors.white.withOpacity(0.25),
-              // Borda com efeito de reflexo de luz
-              border: Border.all(
-                width: 1.5,
-                color: Colors.white.withOpacity(0.5),
-              ),
-            ),
-            child: child,
-          ),
-        ),
-      ),
-    );
-  }
-}
-```
-
-> **Instrução para incluir no `SYSTEM_PROMPT.md`:**
->
-> *Diretriz Adicional de UI:* "Todos os componentes visuais (cards, botões, barras de navegação) devem seguir estritamente o estilo **Liquid Glass 3D / Skeuomorphic Glassmorphism**. Utilize `BackdropFilter` para desfoque de fundo, múltiplas `BoxShadow` profundas para simular relevo realista no espaço 3D, gradientes iridescentes/suaves de fundo e bordas finas com refletividade de luz (`Colors.white.withOpacity(0.5)`)."
-
----
-
-## 3. Pacotes Recomendados
-
-### 3.1 Pacotes para Efeitos de Vidro e Difração (Glassmorphism)
-
-- **`glassmorphic` / `glass`:** Pacotes que facilitam a aplicação de desfoque de fundo (`BackdropFilter`), gradientes de borda com reflexo de luz e transparência vítrea sem precisar escrever código repetitivo.
-- **`glass_kit`:** Oferece containers pré-configurados com bordas iridescentes e sombras em camadas para simular profundidade 3D em superfícies de vidro.
-
-### 3.2 Renderização 3D Nativa e Shaders (Para o Efeito "Liquid/4D")
-
-Para obter o aspecto fluido, refrativo e com sombras realistas em tempo real, os pacotes de Shaders e 3D são os mais indicados:
-
-- **Custom GLSL Shaders (Impeller / Skia Shaders):** A forma mais performática no Flutter 3+ de criar refração de fluido e distorção em tempo real é escrevendo shaders customizados em GLSL (passados via `FragmentShader`). Isso permite criar o efeito de "líquido se movendo dentro do vidro".
-- **`flutter_scene` (3D no Flutter):** Utiliza o novo motor gráfico Impeller do Flutter para carregar elementos 3D com iluminação e sombras reais projetadas sob o glassmorphism.
-- **`rive`:** Excelente alternativa no-code/low-code para desenhar componentes fluídos e tridimensionais com física interativa e exportá-los diretamente para o Flutter com alta performance.
-
-### 3.3 Animações e Micro-interações (O elemento "4D" / Tempo)
-
-- **`flutter_animate`:** Essencial para adicionar movimento contínuo às luzes, refrações e cores passantes no fundo do vidro (`.animate().shimmer()`, `.tint()`, `.scale()`).
-- **`sensors_plus`:** Permite conectar os sensores de giroscópio do celular ao deslocamento das sombras e luzes do Liquid Glass, fazendo o efeito de vidro reagir à inclinação física do aparelho.
+"Órbita": disco coral, aro grafite e círculo hachurado sobre fundo creme, as
+mesmas formas do fundo Editorial. Arquivo:
+`gestao_pessoal/assets/icons/ritmo_icon.png`. O ícone adaptativo do
+Android usa `orbit_foreground.png`, com margem para a máscara circular.

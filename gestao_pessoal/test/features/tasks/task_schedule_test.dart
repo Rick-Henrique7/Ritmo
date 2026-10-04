@@ -50,11 +50,19 @@ void main() {
         TaskSchedule.filter(all, f, thu).map((t) => t.id).toList();
 
     test('Hoje: recorrente feita na terça volta a ficar pendente na quinta', () {
-      expect(ids(TaskFilter.today), ['correr']);
+      expect(ids(TaskFilter.today), contains('correr'));
     });
 
-    test('Próximas: futuras e atrasadas, atrasadas primeiro', () {
-      expect(ids(TaskFilter.upcoming), ['atrasada', 'futura']);
+    test('Hoje: atrasada não feita continua aparecendo, antes das do dia', () {
+      expect(ids(TaskFilter.today), ['atrasada', 'correr']);
+    });
+
+    test('Hoje: concluída ontem não aparece (bug antigo: acumulava)', () {
+      expect(ids(TaskFilter.today), isNot(contains('antiga')));
+    });
+
+    test('Próximas: só futuras (atrasadas ficam em Hoje)', () {
+      expect(ids(TaskFilter.upcoming), ['futura']);
     });
 
     test('Concluídas: pontuais concluídas, mais recentes primeiro', () {
@@ -84,6 +92,67 @@ void main() {
     test('não traz avulsa concluída em outro dia', () {
       final yesterday = task(id: 'a', isCompleted: true, completedAt: wed);
       expect(TaskSchedule.forDay([yesterday], thu), isEmpty);
+    });
+
+    test('não traz pontual de ontem já concluída: o dia começa limpo', () {
+      final done = task(
+        id: 'a',
+        dueDate: wed,
+        isCompleted: true,
+        completedAt: wed,
+      );
+      expect(TaskSchedule.forDay([done], thu), isEmpty);
+    });
+
+    test('traz a atrasada pendente e a mantém no dia em que for feita', () {
+      final late = task(id: 'a', dueDate: mon);
+      expect(TaskSchedule.forDay([late], thu).map((t) => t.id), ['a']);
+
+      final doneToday = task(
+        id: 'a',
+        dueDate: mon,
+        isCompleted: true,
+        completedAt: thu,
+      );
+      expect(TaskSchedule.forDay([doneToday], thu), hasLength(1));
+      expect(TaskSchedule.forDay([doneToday], fri), isEmpty);
+    });
+  });
+
+  group('TaskSchedule.markDone (ação Concluir)', () {
+    test('pontual fica concluída; repetir não desfaz', () {
+      final done = TaskSchedule.markDone(task(dueDate: thu), thu, thu);
+      expect(done.isCompleted, isTrue);
+      expect(TaskSchedule.markDone(done, thu, thu).isCompleted, isTrue);
+    });
+
+    test('recorrente ganha a conclusão só daquele dia', () {
+      final t = task(repeatDays: const [4, 5]);
+      final done = TaskSchedule.markDone(t, thu, thu);
+      expect(done.isCompletedOn(thu), isTrue);
+      expect(done.isCompletedOn(fri), isFalse);
+      expect(
+        TaskSchedule.markDone(done, thu, thu).completedDates,
+        hasLength(1),
+      );
+    });
+  });
+
+  group('TaskSchedule.isOverdue', () {
+    test('pontual de dia anterior, aberta, está atrasada', () {
+      expect(TaskSchedule.isOverdue(task(dueDate: wed), thu), isTrue);
+    });
+
+    test('a do próprio dia ou futura não está atrasada', () {
+      expect(TaskSchedule.isOverdue(task(dueDate: thu), thu), isFalse);
+      expect(TaskSchedule.isOverdue(task(dueDate: fri), thu), isFalse);
+    });
+
+    test('concluída ou recorrente nunca fica atrasada', () {
+      final done = task(dueDate: wed, isCompleted: true, completedAt: wed);
+      final recurring = task(dueDate: mon, repeatDays: const [1, 2, 3]);
+      expect(TaskSchedule.isOverdue(done, thu), isFalse);
+      expect(TaskSchedule.isOverdue(recurring, thu), isFalse);
     });
   });
 

@@ -1,6 +1,6 @@
 # Ciclo de vida de desenvolvimento
 
-> Como o Daily Flow vai da ideia à Play Store, e volta. Projeto individual,
+> Como o Ritmo vai da ideia à Play Store, e volta. Projeto individual,
 > mas com o processo de um time pequeno: cada mudança é rastreável do
 > requisito ao commit e à versão publicada.
 
@@ -68,6 +68,21 @@ gitGraph
   commit id: "docs"
   checkout main
   merge etapa-1-fundacao
+  branch etapa-2-qualidade
+  checkout etapa-2-qualidade
+  commit id: "testes de widget"
+  commit id: "CI"
+  commit id: "docs 2"
+  checkout main
+  merge etapa-2-qualidade
+  branch etapa-3-clean-code
+  checkout etapa-3-clean-code
+  commit id: "ThemeExtension"
+  commit id: "quebra telas"
+  commit id: "timer"
+  commit id: "docs 3"
+  checkout main
+  merge etapa-3-clean-code
 ```
 
 ### Commits: Conventional Commits
@@ -103,8 +118,8 @@ em "Fazendo" quando:
 - se mexe na arquitetura, há um ADR proposto.
 
 **Pronto** (Definition of Done) — uma mudança só vai para a `main` quando:
-- [ ] `flutter analyze` sem erros;
-- [ ] `flutter test` passando, com teste novo para regra nova ou bug corrigido;
+- [ ] CI verde (`flutter analyze` sem erros/avisos e `flutter test` passando);
+- [ ] teste novo para regra nova ou bug corrigido;
 - [ ] testada no aparelho nos dois estilos visuais (Editorial e Liquid Glass);
 - [ ] commits no padrão, diff revisado;
 - [ ] documentação afetada atualizada (ADR, arquitetura, CHANGELOG).
@@ -128,6 +143,7 @@ em "Fazendo" quando:
 | Framework | Flutter (Dart 3) |
 | Estado | Riverpod |
 | Testes | `flutter_test` |
+| Integração contínua | GitHub Actions ([`ci.yml`](../../.github/workflows/ci.yml)) |
 | Análise estática | `flutter analyze` + `flutter_lints` |
 | Diagramas | Mermaid (renderizado pelo GitHub) e SVG em `docs/assets/` |
 | Publicação | Google Play Console |

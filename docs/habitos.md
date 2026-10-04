@@ -1,9 +1,10 @@
 # UI & Feature Spec — Tela de Gestão de Hábitos
 
-> Aqui está a especificação completa e detalhada para a **Tela de Lista e
-> Gestão de Hábitos**, pronta para ser usada como instrução de desenvolvimento
-> pela IA ou incorporada à documentação do projeto.
->
+> **Visão original de interface.** O que está implementado hoje, com status e
+> critérios de aceite, está em [requisitos funcionais](requisitos/funcionais.md).
+> Itens desta spec que não aparecem lá como ✅ estão no backlog ou foram
+> descartados.
+
 > **Objetivo:** Permitir a criação, acompanhamento diário e visualização de
 > consistência de hábitos recorrentes através de um design limpo, interativo
 > e motivacional.

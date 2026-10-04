@@ -6,7 +6,6 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/providers/core_providers.dart';
 import '../../../core/widgets/liquid_glass_card.dart';
 import '../../../core/widgets/screen_header.dart';
-import '../../settings/data/settings_controller.dart';
 import '../data/stats_providers.dart';
 
 class StatsScreen extends ConsumerWidget {
@@ -15,7 +14,7 @@ class StatsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final period = ref.watch(statsPeriodProvider);
-    final accent = ref.watch(accentColorProvider);
+    final accent = context.accent;
     // Todas as contas vêm prontas do domínio (StatsCalculator).
     final summary = ref.watch(statsSummaryProvider);
     final completedTasks = summary.completedTasks;
@@ -72,7 +71,7 @@ class StatsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 Container(
                   height: 1,
-                  color: AppColors.onPanel.withValues(alpha: 0.15),
+                  color: context.palette.onPanel.withValues(alpha: 0.15),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -108,7 +107,7 @@ class StatsScreen extends ConsumerWidget {
                   'Produtividade diária',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: context.palette.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -133,7 +132,7 @@ class StatsScreen extends ConsumerWidget {
                   'Consistência',
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: context.palette.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -163,7 +162,7 @@ class _KpiCard extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     return Row(
       children: [
-        Icon(icon, color: AppColors.onPanelMuted, size: 20),
+        Icon(icon, color: context.palette.onPanelMuted, size: 20),
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -171,11 +170,11 @@ class _KpiCard extends StatelessWidget {
             children: [
               Text(
                 value,
-                style: t.titleLarge?.copyWith(color: AppColors.onPanel),
+                style: t.titleLarge?.copyWith(color: context.palette.onPanel),
               ),
               Text(
                 label,
-                style: t.labelMedium?.copyWith(color: AppColors.onPanelMuted),
+                style: t.labelMedium?.copyWith(color: context.palette.onPanelMuted),
               ),
             ],
           ),
@@ -191,7 +190,7 @@ class _KpiCard extends StatelessWidget {
 /// SideTitles, a versão 0.68 ainda renderiza todos os labels
 /// sobrepostos em eixos categóricos. Aqui controlamos exatamente
 /// quantos labels aparecem com base no período selecionado.
-class _CustomBarChart extends ConsumerWidget {
+class _CustomBarChart extends StatelessWidget {
   const _CustomBarChart({required this.data, required this.period});
   final List<DailyCount> data;
   final StatsPeriod period;
@@ -221,16 +220,16 @@ class _CustomBarChart extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     if (data.isEmpty) {
       return Center(
         child: Text(
           'Sem dados',
-          style: TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: context.palette.textSecondary),
         ),
       );
     }
-    final accent = ref.watch(accentColorProvider);
+    final accent = context.accent;
     final accentDim = HSVColor.fromColor(accent).withValue(0.7).toColor();
     final maxValue =
         data.fold<int>(0, (acc, e) => e.count > acc ? e.count : acc);
@@ -261,13 +260,13 @@ class _CustomBarChart extends ConsumerWidget {
                           decoration: BoxDecoration(
                             // Editorial: barras grafite e o melhor dia em
                             // accent. Glass: fade de opacidade do accent.
-                            color: AppColors.isGlass
+                            color: context.palette.isGlass
                                 ? null
                                 : (data[i].count == maxValue && maxValue > 0
                                     ? accent
-                                    : AppColors.textPrimary
+                                    : context.palette.textPrimary
                                         .withValues(alpha: 0.75)),
-                            gradient: AppColors.isGlass
+                            gradient: context.palette.isGlass
                                 ? LinearGradient(
                                     begin: Alignment.bottomCenter,
                                     end: Alignment.topCenter,
@@ -297,7 +296,7 @@ class _CustomBarChart extends ConsumerWidget {
                             ? Text(
                                 _labelFor(data[i].day),
                                 style: TextStyle(
-                                  color: AppColors.textTertiary,
+                                  color: context.palette.textTertiary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -324,7 +323,7 @@ class _Heatmap extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accent = ref.watch(accentColorProvider);
+    final accent = context.accent;
     final today = ref.watch(todayProvider);
     return Wrap(
       spacing: 3,
@@ -338,7 +337,7 @@ class _Heatmap extends ConsumerWidget {
           decoration: BoxDecoration(
             color: completed
                 ? accent.withValues(alpha: 0.85)
-                : AppColors.veil(0.08),
+                : context.palette.veil(0.08),
             borderRadius: BorderRadius.circular(7),
           ),
         );

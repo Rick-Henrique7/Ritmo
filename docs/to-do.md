@@ -1,5 +1,10 @@
 # UI & Feature Spec — Tela de Gerenciador de Tarefas (To-Do)
 
+> **Visão original de interface.** O que está implementado hoje, com status e
+> critérios de aceite, está em [requisitos funcionais](requisitos/funcionais.md).
+> Itens desta spec que não aparecem lá como ✅ estão no backlog ou foram
+> descartados.
+
 > **Objetivo:** Oferecer uma gestão visual, intuitiva e eficiente de afazeres
 > diários e pontuais, com suporte a priorização, categorização, datas de
 > entrega e ordenação interativa.

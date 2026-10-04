@@ -8,31 +8,41 @@ mas não importa de feature nenhuma. Se algo aqui precisar de algo de
 
 ```
 core/
-├── constants/    # Paleta por estilo, estilo visual, tema
+├── constants/    # AppPalette (ThemeExtension), estilo visual, tema, espaçamentos
 │   ├── app_colors.dart
 │   ├── app_style.dart
 │   └── app_theme.dart
 ├── database/     # Persistência local (SharedPreferences wrapper)
 │   ├── prefs_keys.dart
 │   └── prefs_store.dart
-├── providers/    # Providers de infraestrutura (armazenamento, hoje, vibração, som)
+├── providers/    # Providers de infraestrutura (armazenamento, hoje, relógio, vibração, som, tela acesa)
 │   └── core_providers.dart
-├── services/     # Serviços singleton (haptics, sound)
+├── services/     # Wrappers de plataforma
 │   ├── haptics_service.dart
-│   └── sound_service.dart
+│   ├── sound_service.dart
+│   └── wakelock_service.dart
 ├── utils/        # Funções puras, sem estado
+│   ├── color_hex.dart
 │   ├── date_formatters.dart
 │   ├── date_only.dart
 │   └── json_coders.dart
 └── widgets/      # Widgets reutilizáveis entre features
-    ├── animated_background.dart
-    ├── app_shell.dart
     ├── app_snackbar.dart
+    ├── confirm_delete_dialog.dart
     ├── glass_input_field.dart
     ├── glass_nav_bar.dart
     ├── liquid_glass_card.dart
-    └── screen_header.dart
+    ├── screen_header.dart
+    ├── swipe_delete_background.dart
+    └── weekday_chip.dart
 ```
+
+A casca do app (`AppShell`, fundo animado) fica em `lib/shell/`, fora do
+core, porque lê as configurações ([ADR 0008](../../../docs/adr/0008-shell-fora-do-core.md)).
+
+Cores: `context.palette` (paleta do estilo, uma `ThemeExtension`),
+`context.accent` e `context.foreground` (do tema). Nada de cor global
+estática ([ADR 0006](../../../docs/adr/0006-paleta-como-theme-extension.md)).
 
 ## Quando criar algo em `core/`
 

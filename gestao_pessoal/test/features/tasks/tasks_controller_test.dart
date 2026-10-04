@@ -2,41 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestao_pessoal/core/providers/core_providers.dart';
 import 'package:gestao_pessoal/core/services/haptics_service.dart';
-import 'package:gestao_pessoal/core/services/sound_service.dart';
 import 'package:gestao_pessoal/features/tasks/data/prefs_tasks_repository.dart';
 import 'package:gestao_pessoal/features/tasks/data/tasks_controller.dart';
-import 'package:gestao_pessoal/features/tasks/domain/task_model.dart';
-import 'package:gestao_pessoal/features/tasks/domain/tasks_repository.dart';
 
+import '../../helpers/fakes.dart';
 import '../../helpers/fixtures.dart';
-
-/// Repositório em memória — possível porque o controller depende da
-/// interface [TasksRepository], não do SharedPreferences.
-class InMemoryTasksRepository implements TasksRepository {
-  InMemoryTasksRepository([List<TaskModel>? initial]) : saved = [...?initial];
-
-  List<TaskModel> saved;
-  int saveCalls = 0;
-
-  @override
-  List<TaskModel> loadAll() => [...saved];
-
-  @override
-  Future<void> saveAll(List<TaskModel> tasks) async {
-    saved = [...tasks];
-    saveCalls++;
-  }
-}
-
-/// Som silencioso: não cria AudioPlayer (sem plugin nativo no teste).
-class SilentSound implements SoundService {
-  @override
-  bool get enabled => false;
-  @override
-  Future<void> playSuccess() async {}
-  @override
-  Future<void> dispose() async {}
-}
 
 void main() {
   late InMemoryTasksRepository repo;

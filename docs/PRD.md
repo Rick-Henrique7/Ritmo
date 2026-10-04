@@ -1,135 +1,91 @@
-# Product Requirements Document (PRD) — Daily Flow App
+# Visão de produto — Ritmo
 
-> Documento de requisitos do produto. Define visão, objetivos, arquitetura,
-> requisitos funcionais e não-funcionais e os modelos de dados do **Daily Flow**.
+> Por que o app existe, para quem, e como saber se está dando certo. Os
+> requisitos detalhados, com status e critérios de aceite, estão em
+> [`requisitos/`](requisitos/README.md).
 
----
+## 1. Problema
 
-## 1. Visão Geral do Produto
+Quem tenta organizar a rotina costuma espalhar o dia em vários apps: um para
+hábitos, outro para tarefas, outro para o timer. Cada troca de app custa
+atenção, e a visão do dia nunca fica num lugar só. Muitos desses apps também
+pedem conta, mostram anúncios ou mandam dados para a nuvem, o que é excessivo
+para uma lista pessoal.
 
-O **Daily Flow** é um aplicativo mobile de uso pessoal desenvolvido em Flutter, projetado para consolidar a gestão da rotina diária em uma única plataforma elegante, fluida e de alto desempenho[cite: 1]. O foco central está no apelo visual (UI/UX Premium), suporte offline total e utilização de micro-interações animadas para promover o engajamento diário[cite: 1].
+## 2. Proposta
 
----
+Um app único, **offline e sem conta**, que responde em uma tela "o que eu
+preciso fazer hoje e quanto já fiz", e que seja agradável o bastante para
+ser aberto todo dia.
 
-## 2. Objetivos Principais
+## 3. Público
 
-- **Centralizar a Produtividade:** Unificar Dashboard diário, rastreador de hábitos, gerenciador de tarefas e timer Pomodoro[cite: 1].
-- **Experiência Visual Incrível:** Garantir suporte a Dark Mode nativo, micro-interações fluidas e haptic feedback nas ações concluídas[cite: 1].
-- **Privacidade e Funcionamento Offline:** Persistir todos os dados localmente usando banco de dados no-SQL ultrarrápido (Isar/Hive)[cite: 1].
-- **Facilidade de Uso:** Oferecer fluxos rápidos de inclusão com suporte a gestos (Swipe) e ordenação por atrito mínimo[cite: 1].
+- **Primário:** o próprio autor, que usa o app diariamente e originou os
+  requisitos.
+- **Secundário:** pessoas que querem acompanhar hábitos e tarefas sem
+  cadastro e sem coleta de dados, usuárias da Play Store.
 
----
+## 4. Objetivos
 
-## 3. Arquitetura e Tech Stack
+| Objetivo | Como se mede |
+| --- | --- |
+| Ver o dia em uma tela | Tela Hoje mostra hábitos e tarefas do dia e o progresso (RF-DB-01) |
+| Registrar em um toque | Concluir qualquer item sem trocar de tela (RF-DB-02) |
+| Criar constância | Sequência de hábitos e mapa de consistência (RF-HB-03, RF-ST-03) |
+| Proteger a atenção | Timer de foco confiável mesmo em segundo plano (RF-PO-06) |
+| Respeitar a privacidade | Nenhum dado sai do aparelho (RNF-02) |
+| Ser bonito de usar | Dois estilos visuais e personalização de cores (RF-CF-01 a 05) |
 
-| Camada / Componente | Tecnologia Escolhida | Descrição / Papel |
-| :--- | :--- | :--- |
-| **Framework Mobile** | Flutter (Dart 3+) | Multiplataforma com renderização nativa de 60fps+[cite: 1] |
-| **Gerenciamento de Estado** | Riverpod (NotifierProvider) | Separação clara entre regras de negócio e camada visual[cite: 1] |
-| **Banco de Dados Local** | Isar DB ou Hive | Armazenamento leve, síncrono/assíncrono e 100% offline[cite: 1] |
-| **Roteamento** | GoRouter | Navegação declarativa com rotas nomeadas[cite: 1] |
-| **Animações e UI** | `flutter_animate` + `fl_chart` | Animações declarativas e geração de gráficos estatísticos[cite: 1] |
-| **Notificações Locais** | `flutter_local_notifications` | Lembretes agendados sem necessidade de servidor backend[cite: 1] |
+## 5. Funcionalidades
 
----
+| Área | O que faz | Detalhe |
+| --- | --- | --- |
+| **Hoje** | Saudação, progresso do dia e lista "Hoje no radar" com conclusão em um toque | [spec](dashboard.md) |
+| **Hábitos** | Calendário mensal, hábitos por dia da semana, sequência, dias incompletos | [spec](habitos.md) |
+| **Tarefas** | Pontuais ou recorrentes, prioridade, abas Todas/Hoje/Próximas/Concluídas | [spec](to-do.md) |
+| **Foco** | Pomodoro 25/5/15, ciclo automático, vínculo com tarefa, tela acesa | [spec](pomodoro.md) |
+| **Estatísticas** | Conclusões, minutos de foco, gráfico por período, mapa de 8 semanas | [spec](estatistica.md) |
+| **Configurações** | Estilo Editorial ou Liquid Glass, cores, fundo, vibração e som | [design](design.md) |
 
-## 4. Especificações das Telas e Requisitos Funcionais
+> Os documentos *spec* de cada área registram a **visão original** de
+> interface. Onde a implementação divergiu, por decisão ou por estar no
+> backlog, vale o que está em [`requisitos/funcionais.md`](requisitos/funcionais.md).
 
-### 4.1 Tela de Dashboard (Hoje)
+## 6. Fora do escopo
 
-Visão panorâmica imediata do dia do usuário, integrando hábitos, tarefas e indicadores visuais de progresso[cite: 1].
+Conta e login, sincronização em nuvem, uso por várias pessoas, anúncios,
+analytics e versão iOS publicada.
 
-- **RF-DB-01:** Calcular dinamicamente a taxa de progresso diário combinando hábitos e tarefas do dia[cite: 1].
-- **RF-DB-02:** Permitir a conclusão rápida de qualquer item diretamente pelo Dashboard sem mudança de contexto[cite: 1].
-- **RF-DB-03:** Exibir um menu suspenso ou bottom-sheet de criação rápida ao acionar o botão flutuante (+)[cite: 1].
-- **RF-DB-04:** Atualizar o header com saudações dinâmicas baseadas no relógio local[cite: 1].
+## 7. Tecnologia
 
-### 4.2 Tela de Gestão de Hábitos
+| Necessidade | Escolha | Por quê |
+| --- | --- | --- |
+| App | Flutter (Dart 3) | Uma base de código, UI própria e boa performance |
+| Estado | Riverpod 2 (`Notifier`) | Reativo e fácil de testar com overrides |
+| Navegação | go_router | Rotas declarativas com a barra inferior como *shell* |
+| Dados | SharedPreferences (JSON) | Volume pequeno, leitura síncrona na abertura ([ADR 0003](adr/0003-repositorios.md)) |
+| Calendário | Syncfusion Flutter Calendar | Visão mensal pronta |
+| Gráficos | Widgets próprios | Controle visual total, sem dependência |
+| Som / tela acesa | audioplayers · wakelock_plus | Feedback de conclusão e modo foco |
 
-Acompanhamento de rotinas diárias/semanais com suporte a sequências de consistência (Streaks) e personalização[cite: 1].
+Arquitetura completa: [`arquitetura.md`](arquitetura.md).
 
-- **RF-HB-01:** Exibir hábitos filtrados pelo dia selecionado na fita semanal do calendário[cite: 1].
-- **RF-HB-02:** Registrar a conclusão parcial ou total de hábitos com feedback tátil (haptic)[cite: 1].
-- **RF-HB-03:** Calcular dinamicamente a contagem de dias seguidos (Streak) de cada hábito[cite: 1].
-- **RF-HB-04:** Permitir criação, edição e remoção de hábitos configurando nome, ícone, cor e horário de lembrete[cite: 1].
+## 8. Modelo de dados
 
-### 4.3 Tela de Gerenciador de Tarefas (To-Do)
+| Entidade | Campos principais |
+| --- | --- |
+| `HabitModel` | título, categoria, ícone, cor, `frequencyDays` (1 = seg … 7 = dom), meta e unidade, duração, lembrete, `completedDates` |
+| `TaskModel` | título, prioridade, categoria, data e hora, `repeatDays`, `completedDates` (recorrentes), `isCompleted` / `completedAt` (pontuais), subtarefas |
+| `PomodoroSessionModel` | tipo (foco, pausa curta, pausa longa), início, duração, tarefa vinculada |
+| `AppSettings` | estilo, cores, fundo, vibração, som, cores do timer |
 
-Organização flexível de afazeres diários e projetos por prioridade, datas e sub-tarefas[cite: 1].
+A sequência de hábitos **não é gravada**: é calculada a partir de
+`completedDates` ([ADR 0004](adr/0004-regras-de-dominio-puras.md)).
 
-- **RF-TD-01:** Suportar operações de CRUD completo para tarefas e checklists de sub-tarefas[cite: 1].
-- **RF-TD-02:** Permitir reordenamento manual de tarefas através de gestos Drag & Drop[cite: 1].
-- **RF-TD-03:** Disponibilizar filtros por aba (Todas, Hoje, Próximas, Concluídas) e por categoria[cite: 1].
-- **RF-TD-04:** Permitir ações de conclusão e remoção via gestos de deslizamento (Swipe)[cite: 1].
+## 9. Marcos
 
-### 4.4 Tela de Timer de Foco (Pomodoro)
-
-Ambiente focado e minimalista para execução contínua de tarefas por meio de ciclos configuráveis[cite: 1].
-
-- **RF-PO-01:** Cronômetro regressivo com modos configuráveis de Foco, Pausa Curta e Pausa Longa[cite: 1].
-- **RF-PO-02:** Alternar o estado da sessão automaticamente ao término do tempo estipulado[cite: 1].
-- **RF-PO-03:** Vincular uma sessão ativa a uma tarefa pré-existente no banco de dados[cite: 1].
-- **RF-PO-04:** Disparar alarmes visuais e sonoros com suporte a execução em segundo plano[cite: 1].
-- **RF-PO-05:** Manter a tela do dispositivo ativa durante a execução via `wakelock_plus`[cite: 1].
-
-### 4.5 Tela de Estatísticas & Progresso
-
-Relatórios visuais e gráficos com histórico de desempenho e engajamento pessoal[cite: 1].
-
-- **RF-ST-01:** Exibir métricas agregadas por filtros de período (Semanal, Mensal, Anual)[cite: 1].
-- **RF-ST-02:** Renderizar gráfico de barras de produtividade diária usando `fl_chart`[cite: 1].
-- **RF-ST-03:** Apresentar grade de consistência (Heatmap) baseada no histórico dos hábitos salvos[cite: 1].
-- **RF-ST-04:** Agrupar o tempo e volume de tarefas concluídas por categoria em gráfico de rosca[cite: 1].
-
----
-
-## 5. Requisitos Não-Funcionais (RNF)
-
-- **RNF-01 (Desempenho):** A interface deve manter taxa de quadros consistente a 60fps, sem engasgos durante animações e rolagens[cite: 1].
-- **RNF-02 (Arquitetura):** Todos os dados do app devem ser salvos offline com persistência instantânea em banco NoSQL local[cite: 1].
-- **RNF-03 (UI/UX):** O design system deve utilizar paleta Dark Mode por padrão, fontes modernas e suporte a micro-interações responsivas[cite: 1].
-- **RNF-04 (Notificações):** Os lembretes devem funcionar confiavelmente sem necessidade de conexão com a internet[cite: 1].
-
----
-
-## 6. Modelos de Dados (Entities / Data Models)
-
-```dart
-// HabitModel
-class HabitModel {
-  final String id;
-  final String title;
-  final String category;
-  final String icon;
-  final String colorHex;
-  final List<int> frequencyDays; // 1 (Segunda) a 7 (Domingo)
-  final int targetValue;
-  final String unit;
-  final List<DateTime> completedDates;
-  final int streakCount;
-}
-
-// TaskModel
-class TaskModel {
-  final String id;
-  final String title;
-  final String? description;
-  final TaskPriority priority; // low, medium, high
-  final String category;
-  final DateTime? dueDate;
-  final bool isCompleted;
-  final DateTime? completedAt;
-  final List<SubtaskModel> subtasks;
-  final int orderIndex;
-}
-
-// PomodoroSessionModel
-class PomodoroSessionModel {
-  final String id;
-  final String? taskId;
-  final DateTime startTime;
-  final int durationMinutes;
-  final bool isCompleted;
-  final PomodoroType type; // focus, shortBreak, longBreak
-}
-```
+| Versão | Conteúdo | Situação |
+| --- | --- | --- |
+| v0.1 | Funcionalidades das 6 áreas, dois estilos, arquitetura refatorada, 55 testes, CI | atual |
+| v0.2 | `applicationId` definitivo e fontes embutidas (feitos); assinatura do release, backup, notificações e criação rápida ([backlog](requisitos/README.md#3-backlog)) | próxima |
+| v1.0 | Publicação na Play Store (teste fechado → produção) | — |

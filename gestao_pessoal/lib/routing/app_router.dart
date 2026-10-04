@@ -1,12 +1,12 @@
 import 'package:go_router/go_router.dart';
 
-import '../core/widgets/app_shell.dart';
 import '../features/dashboard/presentation/dashboard_screen.dart';
 import '../features/habits/presentation/habits_screen.dart';
 import '../features/pomodoro/presentation/pomodoro_screen.dart';
 import '../features/settings/presentation/settings_screen.dart';
 import '../features/stats/presentation/stats_screen.dart';
 import '../features/tasks/presentation/tasks_screen.dart';
+import '../shell/app_shell.dart';
 
 /// Configuração central de rotas (GoRouter).
 ///

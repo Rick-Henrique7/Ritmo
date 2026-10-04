@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/providers/core_providers.dart';
-import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/app_snackbar.dart';
-import '../../../core/widgets/glass_input_field.dart';
-import '../../../core/widgets/liquid_glass_card.dart';
+import '../../../core/widgets/confirm_delete_dialog.dart';
 import '../../../core/widgets/screen_header.dart';
+import '../../../core/widgets/swipe_delete_background.dart';
 import '../data/tasks_controller.dart';
-import '../../settings/data/settings_controller.dart';
-import '../domain/subtask_model.dart';
 import '../domain/task_model.dart';
+import 'task_form_dialog.dart';
+import 'widgets/task_filter_tabs.dart';
+import 'widgets/task_tile.dart';
 
 class TasksScreen extends ConsumerWidget {
   const TasksScreen({super.key});
@@ -20,7 +19,7 @@ class TasksScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filter = ref.watch(taskFilterProvider);
     final tasks = ref.watch(filteredTasksProvider);
-    final accent = ref.watch(accentColorProvider);
+    final accent = context.accent;
 
     final pending = ref.watch(pendingTasksCountProvider);
 
@@ -37,7 +36,7 @@ class TasksScreen extends ConsumerWidget {
                   : '$pending ${pending == 1 ? 'pendente' : 'pendentes'}',
               title: 'Tarefas',
             ),
-            _FilterTabs(
+            TaskFilterTabs(
               current: filter,
               accent: accent,
               labelFor: _label,
@@ -73,13 +72,13 @@ class TasksScreen extends ConsumerWidget {
                     Icon(
                       _emptyIconFor(filter),
                       size: 56,
-                      color: AppColors.textTertiary,
+                      color: context.palette.textTertiary,
                     ),
                     const SizedBox(height: 12),
                     Text(
                       _emptyTitleFor(filter),
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: context.palette.textPrimary,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -89,7 +88,7 @@ class TasksScreen extends ConsumerWidget {
                     Text(
                       _emptyHintFor(filter),
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: context.palette.textSecondary,
                         fontSize: 13,
                       ),
                       textAlign: TextAlign.center,
@@ -123,12 +122,12 @@ class TasksScreen extends ConsumerWidget {
                   child: Dismissible(
                     key: ValueKey('task-dismiss-${task.id}'),
                     direction: DismissDirection.endToStart,
-                    background: const _DeleteBackground(),
+                    background: const SwipeDeleteBackground(),
                     confirmDismiss: (_) =>
-                        _confirmDelete(context, ref, task),
+                        _confirmDelete(context, task),
                     onDismissed: (_) =>
                         _onTaskDismissed(context, ref, task),
-                    child: _TaskTile(
+                    child: TaskTile(
                       task: task,
                       onTap: () => _openTaskDialog(context, task),
                     ),
@@ -174,110 +173,51 @@ class TasksScreen extends ConsumerWidget {
       BuildContext context, TaskModel? existing) async {
     await showDialog<void>(
       context: context,
-      builder: (_) => _TaskDialog(existing: existing),
+      builder: (_) => TaskFormDialog(existing: existing),
     );
   }
 
-  /// Confirmação Liquid Glass antes de excluir a tarefa.
-///
-/// Para tarefas recorrentes (com `repeatDays` ou `dueDate` no futuro),
-/// avisa explicitamente que **todas as ocorrências futuras derivadas
-/// desta tarefa também serão removidas** — porque uma `TaskModel`
-/// recorrente representa toda a cadeia, não só uma instância.
-  Future<bool?> _confirmDelete(BuildContext context, WidgetRef ref, TaskModel task) {
-    final recurring = _isRecurring(task);
-    final accent = ref.read(accentColorProvider);
-    return showDialog<bool>(
-      context: context,
-      builder: (ctx) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.all(24),
-        child: LiquidGlassCard(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.delete_outline, color: AppColors.textPrimary),
-                  SizedBox(width: 8),
-                  Text(
-                    'Excluir tarefa?',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ],
+  /// Confirma a exclusão. Para tarefa recorrente ou com data futura,
+  /// avisa que a cadeia inteira de ocorrências também sai — uma
+  /// `TaskModel` recorrente representa todas as ocorrências.
+  Future<bool?> _confirmDelete(BuildContext context, TaskModel task) {
+    final palette = context.palette;
+    final accent = Theme.of(context).colorScheme.primary;
+    return showConfirmDeleteDialog(
+      context,
+      title: 'Excluir tarefa?',
+      message: '"${task.title}" será removida permanentemente. '
+          'Essa ação pode ser desfeita na barra inferior.',
+      details: !_isRecurring(task)
+          ? null
+          : Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: palette.surface2,
+                borderRadius: BorderRadius.circular(AppColors.radiusSm),
+                border: Border.all(color: palette.border),
               ),
-              const SizedBox(height: 12),
-              Text(
-                '"${task.title}" será removida permanentemente.'
-                ' Essa ação pode ser desfeita na barra inferior.',
-                style: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 14,
-                ),
-              ),
-              if (recurring) ...[
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface2,
-                    borderRadius: BorderRadius.circular(AppColors.radiusSm),
-                    border: Border.all(
-                      color: AppColors.border,
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(Icons.repeat_rounded,
-                          size: 18, color: accent),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _recurrenceWarning(task),
-                          style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(ctx, false),
-                    child: const Text('Cancelar'),
-                  ),
+                  Icon(Icons.repeat_rounded, size: 18, color: accent),
                   const SizedBox(width: 8),
-                  FilledButton(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.surface2,
-                      foregroundColor: AppColors.textPrimary,
+                  Expanded(
+                    child: Text(
+                      _recurrenceWarning(task),
+                      style: TextStyle(
+                        color: palette.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                    onPressed: () => Navigator.pop(ctx, true),
-                    child: const Text('Excluir'),
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
+
 
   /// Detecta se a tarefa representa uma cadeia de ocorrências futuras.
   bool _isRecurring(TaskModel t) {
@@ -311,7 +251,6 @@ class TasksScreen extends ConsumerWidget {
     final recurring = _isRecurring(task);
     AppUndoSnackBar.show(
       context,
-      ref,
       icon: recurring ? Icons.event_repeat_outlined : Icons.delete_outline,
       message: recurring
           ? 'Tarefa "${task.title}" e suas próximas ocorrências foram excluídas'
@@ -321,624 +260,8 @@ class TasksScreen extends ConsumerWidget {
   }
 }
 
-/// Cartão de tarefa com tap para editar + check para concluir.
-class _TaskTile extends ConsumerWidget {
-  const _TaskTile({required this.task, required this.onTap});
-  final TaskModel task;
-  final VoidCallback onTap;
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final dueLine = _dueLine(task);
-    final accent = ref.watch(accentColorProvider);
-    // Recorrente: "feita" vale para hoje; pontual: concluída de vez.
-    final done = TaskSchedule.isDoneOn(task, ref.watch(todayProvider));
-    // Mapeia prioridade para a cor — high usa accent (customizado),
-    // medium usa accent escurecido, low fica muted gray.
-    final Color priorityColor = switch (task.priority) {
-      TaskPriority.high => accent,
-      TaskPriority.medium => HSVColor.fromColor(accent).withValue(0.7).toColor(),
-      TaskPriority.low => AppColors.textSecondary,
-    };
-    return LiquidGlassCard(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(20),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 4,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: priorityColor,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      task.title,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        decoration: done
-                            ? TextDecoration.lineThrough
-                            : null,
-                        color: done
-                            ? AppColors.textSecondary
-                            : AppColors.textPrimary,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    tooltip: done ? 'Reabrir' : 'Concluir',
-                    icon: Icon(
-                      done
-                          ? Icons.check_circle
-                          : Icons.radio_button_unchecked,
-                      color: done
-                          ? accent
-                          : AppColors.textTertiary,
-                    ),
-                    onPressed: () =>
-                        ref.read(tasksProvider.notifier).toggleCompleted(task),
-                  ),
-                ],
-              ),
-              if (dueLine != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 6, left: 16),
-                  child: Row(
-                    children: [
-                      Icon(Icons.event_outlined,
-                          size: 14, color: AppColors.textSecondary),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          dueLine,
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              if (task.subtasks.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8, left: 16),
-                  child: Text(
-                    'Sub-tarefas: ${task.completedSubtasksCount}/${task.subtasks.length}',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
-  String? _dueLine(TaskModel t) {
-    final parts = <String>[];
-    if (t.dueDate != null) {
-      parts.add(DateFormatters.shortDate(t.dueDate!));
-    }
-    if (t.dueTime != null) {
-      parts.add(
-        '${t.dueTime!.hour.toString().padLeft(2, '0')}:${t.dueTime!.minute.toString().padLeft(2, '0')}',
-      );
-    }
-    if (t.repeatDays.isNotEmpty) {
-      parts.add('Repete: ${_formatRepeat(t.repeatDays)}');
-    }
-    if (t.category.isNotEmpty) {
-      parts.add(t.category);
-    }
-    return parts.isEmpty ? null : parts.join(' • ');
-  }
 
-  String _formatRepeat(List<int> days) {
-    const labels = ['', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'];
-    final sorted = [...days]..sort();
-    return sorted.map((d) => labels[d]).join(' ');
-  }
-}
 
-/// Diálogo de criação OU edição de uma tarefa.
-///
-/// Quando [existing] é `null` é criação; quando é uma [TaskModel] é
-/// edição e o botão primário diz "Salvar".
-class _TaskDialog extends ConsumerStatefulWidget {
-  const _TaskDialog({this.existing});
-  final TaskModel? existing;
 
-  bool get isEditing => existing != null;
-
-  @override
-  ConsumerState<_TaskDialog> createState() => _TaskDialogState();
-}
-
-class _TaskDialogState extends ConsumerState<_TaskDialog> {
-  // Controllers com keys explícitas para garantir identidade única.
-  // Importante: NUNCA reaproveitar o mesmo controller em dois TextField
-  // — eles compartilham estado e digitação num aparece no outro.
-  late final TextEditingController _titleCtrl;
-  late final TextEditingController _categoryCtrl;
-
-  late TaskPriority _priority;
-  // _dueDate default = HOJE (meia-noite) p/ que toda tarefa nova já
-  // apareça em "Hoje" imediatamente. Mesmo se o usuário limpar com o
-  // × (ficando sem data), a tarefa ainda entra em "Hoje" como ad-hoc
-  // — ver `_isScheduledFor` no controller.
-  late DateTime? _dueDate;
-  TimeOfDay? _dueTime;
-  late final Set<int> _repeatDays;
-
-  static DateTime _todayMidnight() {
-    final n = DateTime.now();
-    return DateTime(n.year, n.month, n.day);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final e = widget.existing;
-    _titleCtrl = TextEditingController(text: e?.title ?? '');
-    _categoryCtrl = TextEditingController(text: e?.category ?? '');
-    _priority = e?.priority ?? TaskPriority.medium;
-    _dueDate = e?.dueDate ?? _todayMidnight();
-    _dueTime = e?.dueTime;
-    _repeatDays = {...?e?.repeatDays};
-  }
-
-  @override
-  void dispose() {
-    _titleCtrl.dispose();
-    _categoryCtrl.dispose();
-    super.dispose();
-  }
-
-  static const _dayLabels = ['', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'];
-
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _dueDate ?? now,
-      firstDate: DateTime(now.year - 1),
-      lastDate: now.add(const Duration(days: 365)),
-    );
-    if (picked != null) setState(() => _dueDate = picked);
-  }
-
-  Future<void> _pickTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _dueTime ?? const TimeOfDay(hour: 9, minute: 0),
-    );
-    if (picked != null) setState(() => _dueTime = picked);
-  }
-
-  Future<void> _submit() async {
-    if (_titleCtrl.text.trim().isEmpty) return;
-    final category = _categoryCtrl.text.trim();
-    final notifier = ref.read(tasksProvider.notifier);
-
-    if (widget.isEditing) {
-      final updated = widget.existing!.copyWith(
-        title: _titleCtrl.text.trim(),
-        priority: _priority,
-        category: category.isEmpty ? 'Geral' : category,
-        dueDate: _dueDate,
-        clearDueDate: _dueDate == null,
-        dueTime: _dueTime,
-        clearDueTime: _dueTime == null,
-        repeatDays: _repeatDays.toList()..sort(),
-      );
-      await notifier.update(updated);
-    } else {
-      await notifier.create(
-        title: _titleCtrl.text.trim(),
-        priority: _priority,
-        category: category.isEmpty ? 'Geral' : category,
-        dueDate: _dueDate,
-        dueTime: _dueTime,
-        repeatDays: _repeatDays.toList()..sort(),
-      );
-    }
-    if (mounted) Navigator.pop(context);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final accent = ref.watch(accentColorProvider);
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.all(16),
-      child: LiquidGlassCard(
-        padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.isEditing ? 'Editar tarefa' : 'Nova tarefa',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Título
-              GlassInputField(
-                key: const ValueKey('task-title-field'),
-                controller: _titleCtrl,
-                hintText: 'Título',
-              ),
-              const SizedBox(height: 12),
-
-              // Prioridade — mesmo visual do GlassInputField (o tema
-              // já define preenchimento, borda arredondada e foco), sem
-              // container extra por fora que vazava nos cantos.
-              DropdownButtonFormField<TaskPriority>(
-                initialValue: _priority,
-                isExpanded: true,
-                borderRadius: BorderRadius.circular(AppColors.radiusMd),
-                decoration: const InputDecoration(
-                  hintText: 'Prioridade',
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: AppColors.space5,
-                    vertical: AppColors.space3 + 2,
-                  ),
-                ),
-                iconEnabledColor: AppColors.textSecondary,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.textPrimary,
-                    ),
-                items: [
-                  for (final p in TaskPriority.values)
-                    DropdownMenuItem(
-                      value: p,
-                      child: Row(
-                        children: [
-                          Icon(p.icon, color: p.colorAt(accent), size: 18),
-                          const SizedBox(width: 8),
-                          Text(p.label),
-                        ],
-                      ),
-                    ),
-                ],
-                onChanged: (v) => setState(() => _priority = v ?? _priority),
-              ),
-              const SizedBox(height: 12),
-
-              // Categoria (controller separado do título)
-              GlassInputField(
-                key: const ValueKey('task-category-field'),
-                controller: _categoryCtrl,
-                hintText: 'Categoria',
-              ),
-              const SizedBox(height: 16),
-
-              // Data + Hora
-              Text(
-                'Quando',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(
-                    child: _GlassPickerButton(
-                      icon: Icons.event_outlined,
-                      label: _dueDate == null
-                          ? 'Data'
-                          : DateFormatters.shortDate(_dueDate!),
-                      active: _dueDate != null,
-                      onTap: _pickDate,
-                      onClear: _dueDate == null
-                          ? null
-                          : () => setState(() => _dueDate = null),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _GlassPickerButton(
-                      icon: Icons.schedule,
-                      label: _dueTime == null
-                          ? 'Hora'
-                          : '${_dueTime!.hour.toString().padLeft(2, '0')}:${_dueTime!.minute.toString().padLeft(2, '0')}',
-                      active: _dueTime != null,
-                      onTap: _pickTime,
-                      onClear: _dueTime == null
-                          ? null
-                          : () => setState(() => _dueTime = null),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // Repetição (dias da semana)
-              Text(
-                'Repetir',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  for (var i = 1; i <= 7; i++)
-                    _DayChip(
-                      label: _dayLabels[i],
-                      active: _repeatDays.contains(i),
-                      onTap: () => setState(() {
-                        if (_repeatDays.contains(i)) {
-                          _repeatDays.remove(i);
-                        } else {
-                          _repeatDays.add(i);
-                        }
-                      }),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Ações
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancelar'),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton(
-                    onPressed: _submit,
-                    child: Text(widget.isEditing ? 'Salvar' : 'Criar'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Botão de seleção estilo Liquid Glass para data/hora.
-class _GlassPickerButton extends StatelessWidget {
-  const _GlassPickerButton({
-    required this.icon,
-    required this.label,
-    required this.active,
-    required this.onTap,
-    this.onClear,
-  });
-
-  final IconData icon;
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-  final VoidCallback? onClear;
-
-  @override
-  Widget build(BuildContext context) {
-    final accent = ProviderScope.containerOf(context)
-        .read(accentColorProvider);
-    return InkWell(
-      borderRadius: BorderRadius.circular(14),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        decoration: BoxDecoration(
-          color: active
-              ? accent.withValues(alpha: 0.25)
-              : AppColors.veil(0.06),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: active
-                ? accent
-                : AppColors.veil(0.18),
-            width: 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 18,
-              color:
-                  active ? AppColors.textPrimary : AppColors.textSecondary,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: active
-                      ? AppColors.textPrimary
-                      : AppColors.textSecondary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            if (onClear != null)
-              GestureDetector(
-                onTap: onClear,
-                child: Icon(
-                  Icons.close,
-                  size: 16,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Chip de dia da semana (1=S … 7=D) usado para repetição.
-class _DayChip extends ConsumerWidget {
-  const _DayChip({
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final accent = ref.watch(accentColorProvider);
-    final activeBg = AppColors.isGlass ? accent : AppColors.panel;
-    final activeFg =
-        AppColors.isGlass ? AppColors.onColor(accent) : AppColors.onPanel;
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          color: active ? activeBg : Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: active ? activeBg : AppColors.border,
-            width: 1,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: TextStyle(
-            color: active ? activeFg : AppColors.textPrimary,
-            fontSize: 13,
-            fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Fundo muted revelado ao deslizar a tarefa para a esquerda.
-/// (Design system: "Don't use red/orange for negative states —
-/// use muted gray instead".)
-class _DeleteBackground extends StatelessWidget {
-  const _DeleteBackground();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.transparent, AppColors.surface2],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        borderRadius: BorderRadius.circular(AppColors.radiusMd),
-      ),
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Excluir',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-            ),
-          ),
-          SizedBox(width: 8),
-          Icon(Icons.delete_outline, color: AppColors.textPrimary, size: 22),
-        ],
-      ),
-    );
-  }
-}
-/// Abas de filtro em texto, com sublinhado no accent (estilo editorial).
-class _FilterTabs extends StatelessWidget {
-  const _FilterTabs({
-    required this.current,
-    required this.accent,
-    required this.labelFor,
-    required this.onChanged,
-  });
-
-  final TaskFilter current;
-  final Color accent;
-  final String Function(TaskFilter) labelFor;
-  final ValueChanged<TaskFilter> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final t = Theme.of(context).textTheme;
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: Row(
-        children: [
-          for (final f in TaskFilter.values)
-            InkWell(
-              onTap: () => onChanged(f),
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(6, 8, 14, 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      labelFor(f),
-                      style: t.titleSmall?.copyWith(
-                        color: f == current
-                            ? AppColors.textPrimary
-                            : AppColors.textTertiary,
-                        fontWeight:
-                            f == current ? FontWeight.w500 : FontWeight.w400,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      height: 2,
-                      width: f == current ? 22 : 0,
-                      color: accent,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}

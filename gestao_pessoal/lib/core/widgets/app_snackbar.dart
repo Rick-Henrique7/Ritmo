@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../constants/app_colors.dart';
-import '../../features/settings/data/settings_controller.dart';
 
-/// Snackbar padronizado do Daily Flow — usado para "Desfazer" exclusões
+/// Snackbar padronizado do Ritmo — usado para "Desfazer" exclusões
 /// de hábitos/tarefas.
 ///
 /// Visual:
@@ -29,16 +27,14 @@ class AppUndoSnackBar {
   /// - [message]: texto principal
   /// - [onUndo]: callback ao tocar em "Desfazer". Após executar,
   ///   o snackbar é fechado explicitamente.
-  /// - [ref]: para ler o accent color atual do usuário.
   static void show(
-    BuildContext context,
-    WidgetRef ref, {
+    BuildContext context, {
     required IconData icon,
     required String message,
     required VoidCallback onUndo,
   }) {
     final messenger = ScaffoldMessenger.of(context);
-    final accent = ref.read(accentColorProvider);
+    final accent = Theme.of(context).colorScheme.primary;
     messenger.hideCurrentSnackBar();
     messenger.showSnackBar(
       SnackBar(
@@ -50,7 +46,7 @@ class AppUndoSnackBar {
               child: Text(
                 message,
                 style: TextStyle(
-                  color: AppColors.onPanel,
+                  color: context.palette.onPanel,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                   height: 1.3,
@@ -60,15 +56,15 @@ class AppUndoSnackBar {
           ],
         ),
         backgroundColor:
-            AppColors.isGlass ? const Color(0xF0161930) : AppColors.panel,
+            context.palette.isGlass ? const Color(0xF0161930) : context.palette.panel,
         elevation: 0,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 84), // 84px = nav bar safe-area
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
-          side: AppColors.isGlass
-              ? BorderSide(color: AppColors.border, width: 1)
+          side: context.palette.isGlass
+              ? BorderSide(color: context.palette.border, width: 1)
               : BorderSide.none,
         ),
         duration: const Duration(seconds: 4),
