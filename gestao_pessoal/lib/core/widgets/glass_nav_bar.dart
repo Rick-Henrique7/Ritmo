@@ -66,7 +66,7 @@ class GlassNavBar extends StatelessWidget {
         ? ClipRRect(
             borderRadius: radius,
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+              filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   borderRadius: radius,

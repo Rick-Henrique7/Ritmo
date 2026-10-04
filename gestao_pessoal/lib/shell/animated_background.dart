@@ -35,18 +35,30 @@ class _AnimatedBackgroundState extends ConsumerState<AnimatedBackground>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
 
+  /// Posição das manchas, atualizada ~12 vezes por segundo. O movimento é
+  /// tão lento (uma volta a cada 22 s) que a diferença para 60 quadros não
+  /// se vê — mas cada quadro a menos poupa o desfoque de todos os cartões
+  /// de vidro por cima do fundo, que é o custo real do Liquid Glass.
+  final _frame = ValueNotifier<double>(0);
+  static const _framesPerLoop = 22 * 12;
+
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 22),
-    );
+    )..addListener(() {
+        final t = (_controller.value * _framesPerLoop).floorToDouble() /
+            _framesPerLoop;
+        if (t != _frame.value) _frame.value = t;
+      });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _frame.dispose();
     super.dispose();
   }
 
@@ -83,7 +95,9 @@ class _AnimatedBackgroundState extends ConsumerState<AnimatedBackground>
     return Stack(
       children: [
         Positioned.fill(child: RepaintBoundary(child: backdrop)),
-        RepaintBoundary(child: widget.child),
+        // Um só "retrato" do fundo para todos os cartões de vidro desfocarem
+        // (BackdropFilter.grouped), em vez de um por cartão.
+        RepaintBoundary(child: BackdropGroup(child: widget.child)),
       ],
     );
   }
@@ -112,10 +126,10 @@ class _AnimatedBackgroundState extends ConsumerState<AnimatedBackground>
         Positioned.fill(child: ColoredBox(color: context.palette.background)),
         Positioned.fill(
           child: AnimatedBuilder(
-            animation: _controller,
+            animation: _frame,
             builder: (context, _) => CustomPaint(
               painter: _BlobsPainter(
-                t: _controller.value,
+                t: _frame.value,
                 blobColors: blobColors,
               ),
             ),

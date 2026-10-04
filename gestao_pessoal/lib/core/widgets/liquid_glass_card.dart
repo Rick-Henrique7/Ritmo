@@ -74,16 +74,19 @@ class LiquidGlassCard extends StatelessWidget {
           borderRadius: radius,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.28),
-              blurRadius: 30,
-              offset: const Offset(0, 14),
+              color: Colors.black.withValues(alpha: 0.22),
+              blurRadius: 18,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: ClipRRect(
           borderRadius: radius,
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          // `grouped`: todos os cartões desfocam o mesmo retrato do fundo
+          // (ver BackdropGroup no AnimatedBackground). Desfoque 12 já dá o
+          // efeito fosco com bem menos custo que 18.
+          child: BackdropFilter.grouped(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
             child: Container(
               padding: padding,
               decoration: BoxDecoration(
