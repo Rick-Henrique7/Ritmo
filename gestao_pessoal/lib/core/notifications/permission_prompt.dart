@@ -29,7 +29,7 @@ Future<void> askNotificationPermissionOnce(
     builder: (ctx) => AlertDialog(
       title: const Text('Ativar avisos?'),
       content: const Text(
-        'O Daily Flow pode avisar no horário das tarefas e dos hábitos, e '
+        'O Ritmo pode avisar no horário das tarefas e dos hábitos, e '
         'mandar um resumo de manhã e das pendências à noite. Tudo é '
         'agendado no seu celular; nada sai dele.',
       ),

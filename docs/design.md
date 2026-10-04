@@ -1,6 +1,6 @@
 # Design visual
 
-> Os dois estilos do Daily Flow e os tokens que os sustentam. No código:
+> Os dois estilos do Ritmo e os tokens que os sustentam. No código:
 > `lib/core/constants/app_colors.dart` (paleta) e `app_theme.dart` (tema).
 > Decisões: [ADR 0005](adr/0005-dois-estilos-visuais.md) e
 > [ADR 0006](adr/0006-paleta-como-theme-extension.md).
@@ -70,5 +70,5 @@ contraste.
 
 "Órbita": disco coral, aro grafite e círculo hachurado sobre fundo creme, as
 mesmas formas do fundo Editorial. Arquivo:
-`gestao_pessoal/assets/icons/daily_flow_icon.png`. O ícone adaptativo do
+`gestao_pessoal/assets/icons/ritmo_icon.png`. O ícone adaptativo do
 Android usa `orbit_foreground.png`, com margem para a máscara circular.

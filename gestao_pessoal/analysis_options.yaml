@@ -1,4 +1,4 @@
-# Análise estática do Daily Flow.
+# Análise estática do Ritmo.
 #
 # Base: flutter_lints (recomendado pelo time do Flutter) + regras extras
 # escolhidas para pegar bugs reais (futures esquecidas, chamadas dinâmicas)

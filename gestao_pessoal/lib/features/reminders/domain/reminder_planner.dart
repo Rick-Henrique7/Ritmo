@@ -70,7 +70,7 @@ abstract final class ReminderPlanner {
           ReminderPayload(
             kind: ReminderKind.morning,
             day: day,
-            title: 'Bom dia! Seu dia no Daily Flow',
+            title: 'Bom dia! Seu dia no Ritmo',
             body: 'Hoje: ${_count(pendingTasks.length, pendingHabits.length)}'
                 '$late',
           ),

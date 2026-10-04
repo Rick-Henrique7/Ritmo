@@ -32,7 +32,7 @@ void main() {
           habits: habits,
           settings: settings,
         ),
-        child: const DailyFlowApp(),
+        child: const RitmoApp(),
       ),
     );
     // O GoRouter é estático: garante que cada teste começa na tela Hoje.

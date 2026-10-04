@@ -23,7 +23,7 @@ android {
     defaultConfig {
         // ID na Play Store: definitivo, não pode mudar depois de publicado.
         // O namespace acima é só o pacote do código Kotlin e pode diferir.
-        applicationId = "com.aevumtech.dailyflow"
+        applicationId = "com.aevumtech.ritmo"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

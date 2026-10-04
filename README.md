@@ -1,12 +1,12 @@
 <div align="center">
 
-<img src="gestao_pessoal/assets/icons/daily_flow_icon.png" alt="Ícone do Daily Flow" width="112">
+<img src="gestao_pessoal/assets/icons/ritmo_icon.png" alt="Ícone do Ritmo" width="112">
 
-# Daily Flow
+# Ritmo
 
 **Hábitos, tarefas e foco em um app só — offline, sem conta, sem anúncios.**
 
-[![CI](https://github.com/Rick-Henrique7/Daily-Flow/actions/workflows/ci.yml/badge.svg)](https://github.com/Rick-Henrique7/Daily-Flow/actions/workflows/ci.yml)
+[![CI](https://github.com/Rick-Henrique7/Ritmo/actions/workflows/ci.yml/badge.svg)](https://github.com/Rick-Henrique7/Ritmo/actions/workflows/ci.yml)
 ![Flutter](https://img.shields.io/badge/Flutter-3-02569B?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-3.11-0175C2?logo=dart&logoColor=white)
 ![Testes](https://img.shields.io/badge/testes-86-4F8A83)
@@ -87,8 +87,8 @@ Pré-requisitos: [Flutter](https://docs.flutter.dev/get-started/install) 3
 (Dart ≥ 3.11) e Android SDK.
 
 ```bash
-git clone https://github.com/Rick-Henrique7/Daily-Flow.git
-cd Daily-Flow/gestao_pessoal
+git clone https://github.com/Rick-Henrique7/Ritmo.git
+cd Ritmo/gestao_pessoal
 flutter pub get
 flutter test        # 86 testes
 flutter run         # com um aparelho ou emulador conectado
@@ -100,7 +100,7 @@ publicação estão no [processo de release](docs/processo/ciclo-de-vida.md#4-pr
 ## Estrutura
 
 ```text
-Daily-Flow/
+Ritmo/
 ├── .github/workflows/ci.yml   integração contínua
 ├── docs/                      requisitos, arquitetura, ADRs, testes, processo
 └── gestao_pessoal/            app Flutter

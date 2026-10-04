@@ -49,7 +49,7 @@ Future<void> main() async {
           );
         }),
       ],
-      child: LiquidGlassWidgets.wrap(child: const DailyFlowApp()),
+      child: LiquidGlassWidgets.wrap(child: const RitmoApp()),
     ),
   );
 

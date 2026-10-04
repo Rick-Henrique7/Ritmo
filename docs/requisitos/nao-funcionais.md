@@ -46,7 +46,7 @@ terciário nos dois estilos.
 
 **RNF-10 — Plataforma** 🟡
 `minSdk` e `targetSdk` seguem os padrões do Flutter instalado. O
-`applicationId` definitivo é **`com.aevumtech.dailyflow`** (o `namespace` do
+`applicationId` definitivo é **`com.aevumtech.ritmo`** (o `namespace` do
 código Kotlin continua o do template, o que não afeta a Play Store). Falta
 antes da primeira publicação:
 - gerar a chave de upload e assinar o AAB; hoje o release usa a chave de

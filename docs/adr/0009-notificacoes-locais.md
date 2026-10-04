@@ -46,5 +46,5 @@ foram feitas) seria o mesmo erro, só que fora do app.
 - Duas cópias do app podem escrever os dados (o app e o isolate da ação). Ao
   receber o sinal da ação, ou ao voltar do segundo plano, o app relê o
   armazenamento antes de continuar.
-- Adiamentos são guardados (`daily_flow.reminder_snoozes`) para sobreviver
+- Adiamentos são guardados (`ritmo.reminder_snoozes`) para sobreviver
   ao reagendamento.

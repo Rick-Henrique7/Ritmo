@@ -58,7 +58,7 @@ na quinta` e, na etapa 3, `segundo plano não atrasa o timer`.
   `test/helpers/fakes.dart`; `testOverrides(today: ...)` isola o app inteiro
   de armazenamento, relógio e plataforma. Sem bibliotecas de mock: os
   contratos são pequenos e o fake fica legível.
-- **Testes de widget montam o app real** (`DailyFlowApp`) numa tela de
+- **Testes de widget montam o app real** (`RitmoApp`) numa tela de
   celular (390 × 844) e navegam como o usuário: tocam na nav bar, nas abas e
   nos itens.
 - **Layout à prova de fonte grande.** O ambiente de teste usa uma fonte de

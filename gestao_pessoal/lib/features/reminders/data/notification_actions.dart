@@ -16,7 +16,7 @@ import 'reminder_sync.dart';
 
 /// Nome da "porta" pela qual o isolate da ação avisa o app aberto que os
 /// dados mudaram (ver `ExternalChangesSync`).
-const reminderSyncPortName = 'daily_flow.reminders';
+const reminderSyncPortName = 'ritmo.reminders';
 
 /// Botão tocado com o app fechado ou em segundo plano (RF-NT-06).
 ///

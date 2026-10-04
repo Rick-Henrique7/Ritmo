@@ -2,4 +2,4 @@
 <!-- O ícone das notificações só é referenciado pelo código Dart; sem isto,
      o build de release pode removê-lo como "não usado". -->
 <resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@drawable/ic_stat_daily_flow" />
+    tools:keep="@drawable/ic_stat_ritmo" />

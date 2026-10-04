@@ -1,4 +1,4 @@
-/// Estilo visual global do Daily Flow, escolhido em Configurações.
+/// Estilo visual global do Ritmo, escolhido em Configurações.
 ///
 /// - [editorial]: papel creme, tinta grafite, círculos coral e painéis
 ///   escuros — inspirado em layouts editoriais / Bauhaus. É o padrão.

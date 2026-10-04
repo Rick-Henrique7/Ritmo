@@ -1,4 +1,4 @@
-# Arquitetura — Daily Flow
+# Arquitetura — Ritmo
 
 > Como o código está organizado **hoje**, por quê, e as regras que mantêm
 > essa organização. As decisões estão registradas em [`adr/`](adr/README.md).
@@ -8,7 +8,7 @@
 
 ## 1. Visão geral
 
-O Daily Flow é um app **Flutter offline-first**: tudo roda no aparelho, sem
+O Ritmo é um app **Flutter offline-first**: tudo roda no aparelho, sem
 servidor. A organização combina duas ideias:
 
 - **Por feature (vertical):** cada funcionalidade — hábitos, tarefas, foco,
@@ -135,7 +135,7 @@ ProviderScope(
       return FeedbackPreferences(haptics: s.hapticsEnabled, sound: s.soundEnabled);
     }),
   ],
-  child: const DailyFlowApp(),
+  child: const RitmoApp(),
 )
 ```
 
@@ -147,10 +147,10 @@ memória sem mudar uma linha do controller.
 
 | Chave (`SharedPreferences`) | Conteúdo | Repositório |
 | --- | --- | --- |
-| `daily_flow.habits` | lista JSON de `HabitModel` | `PrefsHabitsRepository` |
-| `daily_flow.tasks` | lista JSON de `TaskModel` | `PrefsTasksRepository` |
-| `daily_flow.pomodoro_sessions` | lista JSON de `PomodoroSessionModel` | `PrefsPomodoroSessionsRepository` |
-| `daily_flow.settings` | objeto JSON de `AppSettings` | `PrefsSettingsRepository` |
+| `ritmo.habits` | lista JSON de `HabitModel` | `PrefsHabitsRepository` |
+| `ritmo.tasks` | lista JSON de `TaskModel` | `PrefsTasksRepository` |
+| `ritmo.pomodoro_sessions` | lista JSON de `PomodoroSessionModel` | `PrefsPomodoroSessionsRepository` |
+| `ritmo.settings` | objeto JSON de `AppSettings` | `PrefsSettingsRepository` |
 
 - Leitura síncrona: o `PrefsStore` é aberto antes do `runApp`, então os dados
   já estão em memória ([ADR 0003](adr/0003-repositorios.md)).

@@ -24,7 +24,7 @@ class LocalNotificationScheduler implements NotificationScheduler {
   static const focusPayload = 'route:/pomodoro';
 
   /// Ícone monocromático da barra de status (`res/drawable`).
-  static const _icon = 'ic_stat_daily_flow';
+  static const _icon = 'ic_stat_ritmo';
 
   /// Abre o plugin. No app, com os dois callbacks; no isolate da ação em
   /// segundo plano, sem nenhum.
@@ -106,7 +106,7 @@ class LocalNotificationScheduler implements NotificationScheduler {
       await _plugin.zonedSchedule(
         focusNotificationId,
         'Foco concluído',
-        'Hora da pausa. Abra o Daily Flow para continuar.',
+        'Hora da pausa. Abra o Ritmo para continuar.',
         _instant(at),
         _focusDetails,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,

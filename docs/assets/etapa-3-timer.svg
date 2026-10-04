@@ -18,7 +18,7 @@
 </style>
 <rect width="1200" height="700" fill="#EDE5D8"/>
 <circle cx="1220" cy="20" r="150" fill="#E4553F"/><circle cx="1080" cy="110" r="100" fill="none" stroke="#2E2D2B" stroke-opacity=".5"/><line x1="48" y1="40" x2="688" y2="40" stroke="#2E2D2B" stroke-opacity=".55"/>
-<text x="48" y="67" class="eyebrow">Daily Flow · engenharia</text>
+<text x="48" y="67" class="eyebrow">Ritmo · engenharia</text>
 <line x1="48" y1="80" x2="688" y2="80" stroke="#2E2D2B" stroke-opacity=".55"/>
 <text x="48" y="114" class="eyebrow" style="font-weight:300;font-size:17px">Refatoração · etapa 3</text>
 <text x="48" y="150" class="title">Timer pelo horário de término</text>

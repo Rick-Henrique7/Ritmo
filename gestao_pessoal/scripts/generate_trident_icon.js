@@ -1,10 +1,10 @@
 // generate_trident_icon.js
 //
-// Gera o conjunto completo de assets de ícone para o Daily Flow a partir
+// Gera o conjunto completo de assets de ícone para o Ritmo a partir
 // do tridente de referência em `C:\Users\henri\Downloads\icono-tridente.avif`.
 //
 // Saída:
-//   - `assets/icons/daily_flow_icon.png`      (1024×1024 master — web/PWA)
+//   - `assets/icons/ritmo_icon.png`      (1024×1024 master — web/PWA)
 //   - `assets/icons/trident_foreground.png`   (1024×1024 fg transparente p/ adaptive icon)
 //
 // Pipeline aplicado:
@@ -30,7 +30,7 @@ const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
 const SRC = 'C:\\Users\\henri\\Downloads\\icono-tridente.avif';
-const OUT_MASTER = path.join(ROOT, 'assets/icons/daily_flow_icon.png');
+const OUT_MASTER = path.join(ROOT, 'assets/icons/ritmo_icon.png');
 const OUT_FOREGROUND = path.join(ROOT, 'assets/icons/trident_foreground.png');
 
 // === Pipeline ===

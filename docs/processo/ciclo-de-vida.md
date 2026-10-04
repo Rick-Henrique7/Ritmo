@@ -1,6 +1,6 @@
 # Ciclo de vida de desenvolvimento
 
-> Como o Daily Flow vai da ideia à Play Store, e volta. Projeto individual,
+> Como o Ritmo vai da ideia à Play Store, e volta. Projeto individual,
 > mas com o processo de um time pequeno: cada mudança é rastreável do
 > requisito ao commit e à versão publicada.
 

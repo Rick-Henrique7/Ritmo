@@ -1,11 +1,11 @@
 {
-    "name": "Daily Flow",
-    "short_name": "Daily Flow",
+    "name": "Ritmo",
+    "short_name": "Ritmo",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#EDE5D8",
     "theme_color": "#E4553F",
-    "description": "Daily Flow — Aplicativo pessoal de gestão de rotina com hábitos, tarefas, timer Pomodoro e estatísticas. Visual editorial, com estilo Liquid Glass opcional.",
+    "description": "Ritmo — Aplicativo pessoal de gestão de rotina com hábitos, tarefas, timer Pomodoro e estatísticas. Visual editorial, com estilo Liquid Glass opcional.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

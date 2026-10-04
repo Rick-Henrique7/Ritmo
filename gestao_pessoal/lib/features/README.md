@@ -1,6 +1,6 @@
 # `lib/features/` — Arquitetura por feature
 
-Cada pasta é uma **funcionalidade vertical** do Daily Flow. Visão completa em
+Cada pasta é uma **funcionalidade vertical** do Ritmo. Visão completa em
 [`docs/arquitetura.md`](../../../docs/arquitetura.md) e decisões em
 [`docs/adr/`](../../../docs/adr/README.md).
 

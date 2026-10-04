@@ -17,13 +17,13 @@
 
 ## 2. Testes de widget
 
-`test/app_test.dart` monta o `DailyFlowApp` inteiro — rotas, shell, tema
+`test/app_test.dart` monta o `RitmoApp` inteiro — rotas, shell, tema
 editorial — com `testOverrides(today: quinta)`: repositórios em memória,
 data fixa, vibração e som desligados.
 
 ```mermaid
 flowchart LR
-  T[app_test.dart] -->|ProviderScope overrides| A[DailyFlowApp real]
+  T[app_test.dart] -->|ProviderScope overrides| A[RitmoApp real]
   A --> R[GoRouter + AppShell]
   R --> H[Tela Hoje]
   R --> K[Tarefas]

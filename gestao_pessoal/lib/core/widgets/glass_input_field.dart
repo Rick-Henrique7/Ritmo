@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
 
-/// Campo de entrada flat dark do Daily Flow.
+/// Campo de entrada flat dark do Ritmo.
 ///
 /// Design system "Financial App — Dark/Green":
 /// - Background: `#1C1C1C` (surface-2)

@@ -1,4 +1,4 @@
-# Requisitos — Daily Flow
+# Requisitos — Ritmo
 
 > O que o app precisa fazer, o que já faz e como verificar. A
 > [visão de produto](../PRD.md) diz **por quê**; este conjunto diz **o quê**,
@@ -55,7 +55,7 @@ Ordem de ataque para a v0.2, da mais urgente para a menos urgente. O item 1
 | # | Item | Requisitos | Por quê |
 | --- | --- | --- | --- |
 | 1 | Chave de upload e assinatura do release | RNF-10 | Hoje o release é assinado com a chave de debug |
-| ✓ | ~~Definir o `applicationId` final~~ → `com.aevumtech.dailyflow` | RNF-10 | feito |
+| ✓ | ~~Definir o `applicationId` final~~ → `com.aevumtech.ritmo` | RNF-10 | feito |
 | ✓ | ~~Embutir a fonte DM Sans~~ | RNF-01, RNF-02 | feito |
 | 2 | Backup: exportar e importar os dados | RF-CF-07 | Sem nuvem, trocar de celular hoje perde tudo |
 | 3 | Notificações: implementadas, aguardando teste no aparelho para virar ✅ | RF-NT-01 a 08 | Cobre também RF-HB-05, RF-TD-05 e RF-PO-04 |

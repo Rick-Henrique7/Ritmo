@@ -1,4 +1,4 @@
-# Integração contínua do Daily Flow.
+# Integração contínua do Ritmo.
 # A cada push na main e em todo pull request: análise estática e testes.
 # Ver docs/processo/ciclo-de-vida.md (fase "Verificar").
 name: CI

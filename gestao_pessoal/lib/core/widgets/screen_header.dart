@@ -6,7 +6,7 @@ import '../constants/app_colors.dart';
 ///
 /// ```
 /// ───────────────────────────────
-/// Daily Flow                [ações]
+/// Ritmo                [ações]
 /// ───────────────────────────────
 /// Linha de apoio (leve)
 /// Título da tela
@@ -45,7 +45,7 @@ class ScreenHeader extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'Daily Flow',
+                  'Ritmo',
                   style: text.labelLarge?.copyWith(
                     color: context.palette.textPrimary,
                     letterSpacing: 0.4,

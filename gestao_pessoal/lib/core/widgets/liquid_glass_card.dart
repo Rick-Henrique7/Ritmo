@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
 
-/// Card padrão do Daily Flow. O visual segue o [AppStyle] ativo:
+/// Card padrão do Ritmo. O visual segue o [AppStyle] ativo:
 ///
 /// - **Editorial**: papel um tom mais claro que o fundo, borda fina de
 ///   tinta, cantos generosos. Com [panel] = `true` vira um painel

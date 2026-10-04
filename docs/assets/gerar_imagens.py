@@ -1,4 +1,4 @@
-"""Gera as imagens SVG da documentação no estilo editorial do Daily Flow.
+"""Gera as imagens SVG da documentação no estilo editorial do Ritmo.
 
 Uso: python docs/assets/gerar_imagens.py docs/assets <n_unitarios> <n_widget>
 """
@@ -36,7 +36,7 @@ def head(w, h, title, desc):
 
 def header(x, y, w, eyebrow, title):
     return f'''<line x1="{x}" y1="{y}" x2="{x + w}" y2="{y}" stroke="{INK}" stroke-opacity=".55"/>
-<text x="{x}" y="{y + 27}" class="eyebrow">Daily Flow · engenharia</text>
+<text x="{x}" y="{y + 27}" class="eyebrow">Ritmo · engenharia</text>
 <line x1="{x}" y1="{y + 40}" x2="{x + w}" y2="{y + 40}" stroke="{INK}" stroke-opacity=".55"/>
 <text x="{x}" y="{y + 74}" class="eyebrow" style="font-weight:300;font-size:17px">{eyebrow}</text>
 <text x="{x}" y="{y + 110}" class="title">{title}</text>
@@ -51,7 +51,7 @@ def arrowhead(x, y, deg, color=CORAL, s=9):
 def ciclo():
     W, H = 1200, 860
     cx, cy, R = 600, 500, 235
-    s = head(W, H, "Ciclo de vida de desenvolvimento do Daily Flow",
+    s = head(W, H, "Ciclo de vida de desenvolvimento do Ritmo",
              "Seis fases em ciclo: planejar, projetar, implementar, testar, revisar e integrar, lançar; "
              "o feedback do lançamento volta para o planejamento.")
     s += f'<circle cx="{W - 30}" cy="30" r="150" fill="{CORAL}"/>'
@@ -133,7 +133,7 @@ def pipeline():
 
 def piramide(unit, widget, integ):
     W, H = 1100, 720
-    s = head(W, H, "Pirâmide de testes do Daily Flow",
+    s = head(W, H, "Pirâmide de testes do Ritmo",
              f"Base: {unit} testes unitários de domínio e controllers; meio: {widget} teste de widget; "
              f"topo: {integ} testes de integração, planejados.")
     s += f'<circle cx="{W + 40}" cy="{H + 30}" r="200" fill="{CORAL}"/>'
@@ -163,7 +163,7 @@ def piramide(unit, widget, integ):
 
 def camadas():
     W, H = 1200, 800
-    s = head(W, H, "Arquitetura em camadas do Daily Flow",
+    s = head(W, H, "Arquitetura em camadas do Ritmo",
              "Presentation depende de Data, que depende de Domain. Data implementa as interfaces de repositório "
              "do Domain sobre SharedPreferences. Core oferece providers, serviços, tema e utilitários a todas as camadas.")
     s += f'<circle cx="{W + 10}" cy="-10" r="160" fill="{CORAL}"/>'

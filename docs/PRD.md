@@ -1,4 +1,4 @@
-# Visão de produto — Daily Flow
+# Visão de produto — Ritmo
 
 > Por que o app existe, para quem, e como saber se está dando certo. Os
 > requisitos detalhados, com status e critérios de aceite, estão em

@@ -1,7 +1,7 @@
 // generate_icons.js
 //
 // Gera todas as variantes do ícone do app a partir de:
-//   - `assets/icons/daily_flow_icon.png`      (master "Órbita", fundo creme — web/PWA)
+//   - `assets/icons/ritmo_icon.png`      (master "Órbita", fundo creme — web/PWA)
 //   - `assets/icons/orbit_foreground.png`     (foreground transparente — Android)
 //
 // Saídas:
@@ -30,7 +30,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const SRC_MASTER = path.join(ROOT, 'assets/icons/daily_flow_icon.png');
+const SRC_MASTER = path.join(ROOT, 'assets/icons/ritmo_icon.png');
 const SRC_FOREGROUND = path.join(ROOT, 'assets/icons/orbit_foreground.png');
 
 // Tamanhos Android (mdpi=48, hdpi=72, xhdpi=96, xxhdpi=144, xxxhdpi=192)
@@ -120,7 +120,7 @@ async function generate() {
   fs.mkdirSync(drawableDir, { recursive: true });
   const backgroundXml = `<?xml version="1.0" encoding="utf-8"?>
 <!--
-  Background sólido do adaptive icon do Daily Flow.
+  Background sólido do adaptive icon do Ritmo.
   Creme editorial (#EDE5D8) — mesma cor do master p/ coerência visual
   entre o ícone legacy e o adaptive no Android 8+ (API 26+).
 -->
@@ -149,7 +149,7 @@ async function generate() {
     const fgName = roundFlag ? 'ic_launcher_round_foreground' : 'ic_launcher_foreground';
     return `<?xml version="1.0" encoding="utf-8"?>
 <!--
-  Adaptive icon configuration for Daily Flow.
+  Adaptive icon configuration for Ritmo.
   Refs:
     - foreground: "Órbita" 108×108dp (${fgName}.png)
                   área visível segura: 72×72dp centralizado

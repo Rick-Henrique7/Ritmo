@@ -51,7 +51,7 @@ para o topo do backlog:
    a declaração de privacidade.
 
 Os dois foram resolvidos em seguida, na branch `fix/publicacao-android`: o ID
-passou a ser `com.aevumtech.dailyflow` e a DM Sans foi embutida, com a remoção
+passou a ser `com.aevumtech.ritmo` e a DM Sans foi embutida, com a remoção
 do `google_fonts`.
 
 Situação ao fim da etapa: **25 de 38** requisitos funcionais completos, 6

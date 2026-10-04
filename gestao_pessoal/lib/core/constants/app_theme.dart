@@ -4,7 +4,7 @@ import '../utils/color_hex.dart';
 import 'app_colors.dart';
 import 'app_style.dart';
 
-/// Tema central do Daily Flow — um por [AppStyle].
+/// Tema central do Ritmo — um por [AppStyle].
 ///
 /// - **Editorial**: tema claro, fonte **Jost** (geométrica, embutida em
 ///   `assets/fonts`), títulos em peso leve, accent coral, botões em

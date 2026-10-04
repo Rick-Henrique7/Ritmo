@@ -8,8 +8,8 @@ import 'routing/app_router.dart';
 import 'shell/day_rollover.dart';
 import 'shell/external_changes_sync.dart';
 
-class DailyFlowApp extends ConsumerWidget {
-  const DailyFlowApp({super.key});
+class RitmoApp extends ConsumerWidget {
+  const RitmoApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -24,7 +24,7 @@ class DailyFlowApp extends ConsumerWidget {
     return DayRollover(
       child: ExternalChangesSync(
         child: MaterialApp.router(
-          title: 'Daily Flow',
+          title: 'Ritmo',
           debugShowCheckedModeBanner: false,
           theme: theme,
           darkTheme: theme,

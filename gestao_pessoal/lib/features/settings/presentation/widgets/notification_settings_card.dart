@@ -171,7 +171,7 @@ class _NotificationSettingsCardState
                         child: Text(
                           'O Android está bloqueando os avisos. Se tocar em '
                           'Permitir não abrir nada, libere em Configurações '
-                          'do Android → Apps → Daily Flow → Notificações.',
+                          'do Android → Apps → Ritmo → Notificações.',
                           style: TextStyle(
                             color: palette.textSecondary,
                             fontSize: 12,

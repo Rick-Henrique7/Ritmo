@@ -1,4 +1,4 @@
-# Documentação do Daily Flow
+# Documentação do Ritmo
 
 ![Ciclo de vida de desenvolvimento](assets/ciclo-de-vida.svg)
 

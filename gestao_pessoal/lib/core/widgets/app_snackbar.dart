@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
 
-/// Snackbar padronizado do Daily Flow — usado para "Desfazer" exclusões
+/// Snackbar padronizado do Ritmo — usado para "Desfazer" exclusões
 /// de hábitos/tarefas.
 ///
 /// Visual:

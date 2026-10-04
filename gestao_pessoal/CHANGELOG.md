@@ -37,7 +37,7 @@ e este projeto segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
   Estatísticas).
 
 ### Alterado
-- `applicationId` definitivo para a Play Store: `com.aevumtech.dailyflow`.
+- `applicationId` definitivo para a Play Store: `com.aevumtech.ritmo`.
 - Fonte DM Sans (Liquid Glass) embutida no app; removido `google_fonts`. O app
   não faz mais nenhuma requisição de rede e funciona igual offline.
 
@@ -116,13 +116,13 @@ e este projeto segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 ## [0.0.1] — 2026-08-15
 
 ### Adicionado
-- Build base do Daily Flow: 5 telas (Hoje/Hábitos/Tarefas/Foco/Stats) +
+- Build base do Ritmo: 5 telas (Hoje/Hábitos/Tarefas/Foco/Stats) +
   Configurações, com Riverpod + GoRouter.
 - Persistência local via SharedPreferences.
 - Liquid Glass 3D (shaders + jelly) via `liquid_glass_widgets`.
 - Calendário Syncfusion para hábitos (mês com appointments).
 - Tema Dark/Green único, fonte DM Sans, sem glassmorphism no conteúdo.
 
-[Não lançado]: https://github.com/Rick-Henrique7/Daily-Flow/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/Rick-Henrique7/Daily-Flow/releases/tag/v0.1.0
-[0.0.1]: https://github.com/Rick-Henrique7/Daily-Flow/releases/tag/v0.0.1
+[Não lançado]: https://github.com/Rick-Henrique7/Ritmo/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/Rick-Henrique7/Ritmo/releases/tag/v0.1.0
+[0.0.1]: https://github.com/Rick-Henrique7/Ritmo/releases/tag/v0.0.1
