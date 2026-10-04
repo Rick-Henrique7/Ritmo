@@ -56,8 +56,8 @@ funciona sem internet.
 
 | Item | Formato | De onde vem |
 | --- | --- | --- |
-| Ícone | 512 × 512 PNG | `gestao_pessoal/assets/icons/ritmo_icon.png` redimensionado |
-| Imagem de destaque | 1024 × 500 PNG/JPG | a criar (Órbita + nome sobre o creme) |
+| Ícone | 512 × 512 PNG | [`icone-512.png`](icone-512.png) |
+| Imagem de destaque | 1024 × 500 PNG | [`destaque-1024x500.png`](destaque-1024x500.png) |
 | Capturas de tela | 2 a 8, retrato | prints do celular: Hoje, Hábitos, Tarefas, Foco, Estatísticas |
 
 ## Segurança dos dados (formulário)
