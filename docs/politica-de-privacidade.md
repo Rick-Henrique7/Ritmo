@@ -52,4 +52,4 @@ antes da mudança, com nova data no topo.
 
 ## Contato
 
-Dúvidas sobre privacidade: **[SEU E-MAIL DE CONTATO]**.
+Dúvidas sobre privacidade: **aevumtech.apps@gmail.com**.
