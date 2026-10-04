@@ -32,6 +32,7 @@ widget próprio em `widgets/`.
 | `settings` | `AppSettings`, `SettingsRepository` | `SettingsNotifier` | `SettingsScreen`, `widgets/` |
 | `stats` | `StatsCalculator` | `stats_providers.dart` | `StatsScreen` |
 | `dashboard` | — | — | `DashboardScreen` (tela Hoje) |
+| `reminders` | `ReminderPlanner`, `ReminderPayload`, `ReminderSnooze` | `reminderSyncProvider`, ações da notificação | — (configuração em `settings`) |
 
 ## Regras de dependência
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/notifications/permission_prompt.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/glass_input_field.dart';
 import '../../../core/widgets/liquid_glass_card.dart';
@@ -109,6 +110,10 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
         dueTime: _dueTime,
         repeatDays: _repeatDays.toList()..sort(),
       );
+    }
+    // Tarefa com horário: bom momento para pedir a permissão de avisos.
+    if (_dueTime != null && mounted) {
+      await askNotificationPermissionOnce(context, ref);
     }
     if (mounted) Navigator.pop(context);
   }

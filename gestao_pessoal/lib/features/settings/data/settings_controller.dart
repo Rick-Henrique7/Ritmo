@@ -102,6 +102,12 @@ class SettingsNotifier extends Notifier<AppSettings> {
     await _persist();
   }
 
+  /// Avisos e lembretes (RF-NT-07).
+  Future<void> updateNotifications(NotificationSettings value) async {
+    state = state.copyWith(notifications: value);
+    await _persist();
+  }
+
   Future<void> resetDefaults() async {
     // Mantém o estilo escolhido; restaura o resto.
     final style = state.style;

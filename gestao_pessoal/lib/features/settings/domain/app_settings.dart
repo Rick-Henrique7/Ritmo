@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import '../../../core/constants/app_style.dart';
+import 'notification_settings.dart';
 
 export '../../../core/constants/app_style.dart';
+export 'notification_settings.dart';
 
 /// Modo de renderização do fundo da tela.
 ///
@@ -43,6 +45,7 @@ class AppSettings {
     required this.pomodoroFocusColor,
     required this.pomodoroShortBreakColor,
     required this.pomodoroLongBreakColor,
+    this.notifications = NotificationSettings.defaults,
   });
 
   /// Estilo visual global (Editorial ou Liquid Glass).
@@ -88,6 +91,9 @@ class AppSettings {
   /// Cor do anel e label do modo **Pausa Longa** no Pomodoro.
   final String pomodoroLongBreakColor;
 
+  /// Avisos e lembretes (RF-NT-07).
+  final NotificationSettings notifications;
+
   static const defaults = AppSettings(
     style: AppStyle.editorial,
     wallpaperMode: WallpaperMode.animated,
@@ -118,6 +124,7 @@ class AppSettings {
     String? pomodoroFocusColor,
     String? pomodoroShortBreakColor,
     String? pomodoroLongBreakColor,
+    NotificationSettings? notifications,
   }) {
     return AppSettings(
       style: style ?? this.style,
@@ -135,6 +142,7 @@ class AppSettings {
           pomodoroShortBreakColor ?? this.pomodoroShortBreakColor,
       pomodoroLongBreakColor:
           pomodoroLongBreakColor ?? this.pomodoroLongBreakColor,
+      notifications: notifications ?? this.notifications,
     );
   }
 
@@ -152,6 +160,7 @@ class AppSettings {
         'pomodoroFocusColor': pomodoroFocusColor,
         'pomodoroShortBreakColor': pomodoroShortBreakColor,
         'pomodoroLongBreakColor': pomodoroLongBreakColor,
+        'notifications': notifications.toJson(),
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
@@ -202,6 +211,9 @@ class AppSettings {
           json['pomodoroLongBreakColor'] as String?,
           isLegacy ? ['#1A4D2E', '#34D399'] : [],
           d.pomodoroLongBreakColor),
+      notifications: NotificationSettings.fromJson(
+        json['notifications'] as Map<String, dynamic>?,
+      ),
     );
   }
 

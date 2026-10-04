@@ -10,7 +10,7 @@
 
 | Nível | O que cobre | Velocidade | Hoje | Meta |
 | --- | --- | --- | --- | --- |
-| **Unitário** | Regras puras do domínio, modelos (JSON e migração), controllers com repositório em memória e relógio falso | milissegundos | 58 | toda regra nova e todo bug corrigido |
+| **Unitário** | Regras puras do domínio, modelos (JSON e migração), controllers com repositório em memória e relógio falso | milissegundos | 80 | toda regra nova e todo bug corrigido |
 | **Widget** | App real (rotas, shell, tema, telas) com armazenamento em memória e data fixa | rápido | 6 | fluxos principais de cada tela |
 | **Integração / E2E** | Fluxos completos no aparelho ou emulador (`integration_test`) | lento | 0 | antes da primeira versão na Play Store |
 
@@ -22,18 +22,20 @@ testadas sem montar interface.
 
 | Arquivo | Testes | Protege |
 | --- | --- | --- |
-| `test/features/tasks/task_schedule_test.dart` | 19 | "é de hoje", tarefas atrasadas, conteúdo de cada aba, painel Hoje, contador de pendentes |
+| `test/features/tasks/task_schedule_test.dart` | 21 | "é de hoje", tarefas atrasadas, conteúdo de cada aba, painel Hoje, contador de pendentes |
 | `test/features/tasks/task_model_test.dart` | 3 | JSON ida e volta; **migração** de recorrentes antigas |
 | `test/features/tasks/tasks_controller_test.dart` | 4 | Concluir/desfazer recorrente por dia, persistência via repositório |
 | `test/features/habits/habit_rules_test.dart` | 9 | Sequência (dias previstos, quebra, hoje em aberto), dias incompletos |
 | `test/features/stats/stats_calculator_test.dart` | 4 | Contagem de conclusões, gráfico semanal e anual, minutos de foco |
 | `test/features/pomodoro/pomodoro_cycle_test.dart` | 6 | Próximo modo (pausa longa no 4º foco), "pular", tempo restante arredondado |
-| `test/features/pomodoro/pomodoro_controller_test.dart` | 10 | Timer pelo horário de término: segundo plano, pausa, conclusão única, sessão gravada, som, tela acesa |
+| `test/features/pomodoro/pomodoro_controller_test.dart` | 11 | Timer pelo horário de término: segundo plano, pausa, conclusão única, sessão gravada, som, tela acesa |
+| `test/features/reminders/reminder_planner_test.dart` | 16 | Quais avisos existem e quando: resumo, pendências, tarefas, hábitos, adiamento, chave geral |
+| `test/features/settings/notification_settings_test.dart` | 3 | Padrões e migração das configurações de aviso |
 | `test/core/json_coders_test.dart` | 3 | Registros corrompidos não derrubam o app |
 | `test/app_test.dart` | 5 | Tela Hoje (progresso e concluir, tarefa atrasada), estado vazio, abas de Tarefas, estilos em Configurações |
 | `test/shell/day_rollover_test.dart` | 1 | Virada do dia ao voltar do segundo plano |
 
-**Total: 64 testes** (58 unitários + 6 de widget).
+**Total: 86 testes** (80 unitários + 6 de widget).
 
 **Testes de regressão:** cada bug corrigido na etapa 1 tem um teste com o
 cenário que falhava — por exemplo `gráfico anual soma o mês inteiro (bug

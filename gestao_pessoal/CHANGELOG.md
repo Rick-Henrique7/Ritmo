@@ -25,6 +25,11 @@ e este projeto segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
   "Som de conclusão".
 
 ### Adicionado
+- Notificações locais: resumo da manhã (8h), pendências da noite (20h),
+  horário de tarefas e de hábitos, e fim do foco com o app minimizado.
+  Botões **Concluir** e **Adiar 1 h** nos avisos de tarefa e hábito.
+  Configurações → Notificações para ligar, desligar e ajustar horários.
+- Tela de abertura creme com a Órbita (antes: fundo preto no modo escuro).
 - Tela fica acesa enquanto o timer de foco está rodando.
 - Tarefa pontual não feita continua em Hoje nos dias seguintes, com a marca
   "Atrasada", até ser concluída. A aba Próximas passa a mostrar só datas

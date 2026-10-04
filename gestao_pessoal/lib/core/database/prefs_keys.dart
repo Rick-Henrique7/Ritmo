@@ -9,4 +9,7 @@ class PrefsKeys {
   static const String tasks = 'daily_flow.tasks';
   static const String pomodoroSessions = 'daily_flow.pomodoro_sessions';
   static const String settings = 'daily_flow.settings';
+  static const String reminderSnoozes = 'daily_flow.reminder_snoozes';
+  static const String notificationPermissionAsked =
+      'daily_flow.notification_permission_asked';
 }

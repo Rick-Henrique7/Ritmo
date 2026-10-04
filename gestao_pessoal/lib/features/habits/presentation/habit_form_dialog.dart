@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/notifications/permission_prompt.dart';
 import '../../../core/utils/color_hex.dart';
 import '../../../core/widgets/app_snackbar.dart';
 import '../../../core/widgets/confirm_delete_dialog.dart';
@@ -198,6 +199,10 @@ class _HabitFormDialogState extends ConsumerState<HabitFormDialog> {
         reminderTime: _reminder,
         durationMinutes: _durationMinutes,
       );
+    }
+    // Hábito com lembrete: bom momento para pedir a permissão de avisos.
+    if (_reminder != null && mounted) {
+      await askNotificationPermissionOnce(context, ref);
     }
     if (mounted) Navigator.pop(context);
   }

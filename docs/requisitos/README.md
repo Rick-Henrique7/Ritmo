@@ -6,7 +6,7 @@
 
 | Documento | Conteúdo |
 | --- | --- |
-| [Requisitos funcionais](funcionais.md) | 39 requisitos em 6 áreas, com critérios Dado / Quando / Então |
+| [Requisitos funcionais](funcionais.md) | 47 requisitos em 7 áreas, com critérios Dado / Quando / Então |
 | [Requisitos não funcionais](nao-funcionais.md) | Privacidade, offline, desempenho, acessibilidade, manutenção |
 | [Casos de uso](casos-de-uso.md) | 7 fluxos do dia a dia, com caminhos alternativos |
 | [Rastreabilidade](rastreabilidade.md) | Requisito → código → teste → caso de uso, e lacunas de teste |
@@ -25,7 +25,7 @@ compartilhado, anúncios, coleta de dados.
 
 **IDs:** `RF-<área>-<nº>` para funcionais e `RNF-<nº>` para não funcionais.
 Áreas: `DB` Hoje · `HB` Hábitos · `TD` Tarefas · `PO` Foco · `ST`
-Estatísticas · `CF` Configurações. Um ID nunca é reaproveitado: requisito
+Estatísticas · `CF` Configurações · `NT` Notificações. Um ID nunca é reaproveitado: requisito
 abandonado fica como **Won't**.
 
 **Prioridade (MoSCoW):**
@@ -44,7 +44,7 @@ Situação atual (v0.1, etapa 4):
 
 | | ✅ | 🟡 | ⬜ | Total |
 | --- | --- | --- | --- | --- |
-| Funcionais | 26 | 6 | 7 | 39 |
+| Funcionais | 26 | 6 | 15 | 47 |
 | Não funcionais | 7 | 3 | 0 | 10 |
 
 ## 3. Backlog
@@ -58,7 +58,7 @@ Ordem de ataque para a v0.2, da mais urgente para a menos urgente. O item 1
 | ✓ | ~~Definir o `applicationId` final~~ → `com.aevumtech.dailyflow` | RNF-10 | feito |
 | ✓ | ~~Embutir a fonte DM Sans~~ | RNF-01, RNF-02 | feito |
 | 2 | Backup: exportar e importar os dados | RF-CF-07 | Sem nuvem, trocar de celular hoje perde tudo |
-| 3 | Notificações locais: lembrete de hábito, horário de tarefa, fim do foco em segundo plano | RF-HB-05, RF-TD-05, RF-PO-04 | Uma dependência resolve os três |
+| 3 | Notificações: implementadas, aguardando teste no aparelho para virar ✅ | RF-NT-01 a 08 | Cobre também RF-HB-05, RF-TD-05 e RF-PO-04 |
 | 4 | **+** da tela Hoje abre o formulário direto | RF-DB-03 | Um toque a menos no fluxo mais comum |
 | 5 | Subtarefas e descrição no formulário de tarefa | RF-TD-01 | Modelo e controller prontos; falta a tela |
 | 6 | Indicadores das Estatísticas pelo período | RF-ST-01 | O filtro hoje só muda o gráfico |

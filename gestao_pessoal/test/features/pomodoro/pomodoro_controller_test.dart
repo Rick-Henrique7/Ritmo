@@ -11,6 +11,7 @@ void main() {
   late InMemorySessionsRepository sessions;
   late CountingSound sound;
   late FakeWakelock wakelock;
+  late FakeNotificationScheduler notifications;
   late ProviderContainer container;
 
   PomodoroTimerState state() => container.read(pomodoroTimerProvider);
@@ -22,6 +23,7 @@ void main() {
     sessions = InMemorySessionsRepository();
     sound = CountingSound();
     wakelock = FakeWakelock();
+    notifications = FakeNotificationScheduler();
     container = ProviderContainer(
       overrides: testOverrides(
         today: thu,
@@ -29,6 +31,7 @@ void main() {
         sessions: sessions,
         sound: sound,
         wakelock: wakelock,
+        notifications: notifications,
       ),
     );
   });
@@ -138,5 +141,12 @@ void main() {
     expect(wakelock.on, isTrue);
     timer().pause();
     expect(wakelock.on, isFalse);
+  });
+
+  test('agenda o aviso de fim do foco e cancela ao pausar (RF-NT-05)', () {
+    timer().start();
+    expect(notifications.focusEndsAt, DateTime(2026, 10, 1, 9, 25));
+    timer().pause();
+    expect(notifications.focusEndsAt, isNull);
   });
 }

@@ -8,6 +8,7 @@ import '../../../core/widgets/screen_header.dart';
 import '../data/settings_controller.dart';
 import '../domain/app_settings.dart';
 import 'widgets/color_picker_dialog.dart';
+import 'widgets/notification_settings_card.dart';
 import 'widgets/settings_tiles.dart';
 import 'widgets/style_preview.dart';
 
@@ -158,6 +159,10 @@ class SettingsScreen extends ConsumerWidget {
                 ],
               ),
             ),
+
+            // === Notificações ===
+            const SettingsSectionHeader('Notificações'),
+            const NotificationSettingsCard(),
 
             // === Timer de foco ===
             const SettingsSectionHeader('Timer de foco'),

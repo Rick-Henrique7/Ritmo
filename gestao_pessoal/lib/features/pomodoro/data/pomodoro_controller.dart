@@ -107,9 +107,12 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
   /// Começa (ou retoma) a contagem: grava o horário de término.
   void start() {
     if (state.isRunning) return;
-    state = state.copyWith(
-      endsAt: _now().add(Duration(seconds: state.remainingSeconds)),
-    );
+    final endsAt = _now().add(Duration(seconds: state.remainingSeconds));
+    state = state.copyWith(endsAt: endsAt);
+    // RF-NT-05: aviso do sistema caso o app esteja minimizado no fim.
+    if (ref.read(focusAlertEnabledProvider)) {
+      unawaited(ref.read(notificationSchedulerProvider).scheduleFocusEnd(endsAt));
+    }
     _ticker?.cancel();
     _ticker = Timer.periodic(
       const Duration(milliseconds: 250),
@@ -190,6 +193,7 @@ class PomodoroTimerNotifier extends Notifier<PomodoroTimerState> {
     _ticker!.cancel();
     _ticker = null;
     unawaited(_wakelock.keepScreenOn(false));
+    unawaited(ref.read(notificationSchedulerProvider).cancelFocusEnd());
   }
 }
 

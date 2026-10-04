@@ -63,7 +63,7 @@ Rotinas que se repetem em dias da semana escolhidos.
 | RF-HB-02 | Marcar e desmarcar a conclusão de um hábito em um dia, com vibração e som | Must | ✅ |
 | RF-HB-03 | Calcular a sequência (streak) de dias previstos cumpridos | Must | 🟡 |
 | RF-HB-04 | Criar, editar e excluir hábitos | Must | ✅ |
-| RF-HB-05 | Lembrete por notificação no horário configurado | Should | ⬜ |
+| RF-HB-05 | Lembrete por notificação no horário configurado (ver RF-NT-04) | Should | ⬜ |
 | RF-HB-06 | Destacar no calendário os dias com hábito previsto e não feito | Could | ✅ |
 
 **RF-HB-01 — Hábitos do dia**
@@ -296,6 +296,68 @@ Timer Pomodoro: blocos de foco intercalados com pausas.
   perde os dados.*
 
 ---
+
+## 7. Notificações (`NT`)
+
+Avisos locais, agendados no próprio aparelho: funcionam com o app fechado e
+sem internet. Nenhum dado sai do celular.
+
+| ID | Requisito | Prioridade | Status |
+| --- | --- | --- | --- |
+| RF-NT-01 | Resumo da manhã com o que há para hoje | Should | ⬜ |
+| RF-NT-02 | Pendências da noite, só se faltar algo | Should | ⬜ |
+| RF-NT-03 | Aviso de tarefa com horário (na hora ou com antecedência) | Must | ⬜ |
+| RF-NT-04 | Aviso de hábito no horário de lembrete | Must | ⬜ |
+| RF-NT-05 | Aviso de fim da sessão de foco com o app minimizado | Should | ⬜ |
+| RF-NT-06 | Botões **Concluir** e **Adiar 1 h** nos avisos de tarefa e hábito | Should | ⬜ |
+| RF-NT-07 | Configurar cada aviso, com horários, e pedir a permissão no momento certo | Must | ⬜ |
+| RF-NT-08 | Avisos sempre coerentes com os dados (nunca sobre algo já feito) | Must | ⬜ |
+
+Padrões da versão piloto: resumo às **8h**, pendências às **20h**, tarefas
+**na hora**. Tudo ligado. RF-HB-05, RF-TD-05 e RF-PO-04 (parte em segundo
+plano) passam a ser atendidos por esta seção.
+
+**RF-NT-01 — Resumo da manhã**
+- Dado 3 tarefas e 2 hábitos para hoje, às 8h chega "Hoje: 3 tarefas e 2
+  hábitos", com as atrasadas incluídas e indicadas.
+- Dado um dia sem nada previsto, não chega nada.
+
+**RF-NT-02 — Pendências da noite**
+- Dado 1 tarefa e 1 hábito ainda não feitos, às 20h chega "Faltam 1 tarefa e
+  1 hábito hoje".
+- Dado tudo feito antes das 20h, não chega nada.
+
+**RF-NT-03 — Tarefa com horário**
+- Dado "Dentista" hoje às 15h e antecedência "na hora", às 15h chega o aviso
+  com o título da tarefa. Com antecedência de 15 min, chega às 14h45.
+- Tarefa recorrente com horário avisa em cada dia previsto.
+- Tarefa concluída antes do horário não avisa.
+
+**RF-NT-04 — Hábito**
+- Dado um hábito com lembrete às 7h em seg/qua/sex, o aviso chega às 7h só
+  nesses dias e só se o hábito ainda não foi feito no dia.
+
+**RF-NT-05 — Fim do foco**
+- Dado um foco iniciado e o app minimizado, ao fim da sessão chega "Foco
+  concluído". Pausar, parar ou pular cancela o aviso.
+
+**RF-NT-06 — Ações na notificação**
+- **Concluir** marca a tarefa ou o hábito como feito naquele dia sem abrir o
+  app; ao abrir o app depois, ele já aparece concluído.
+- **Adiar 1 h** some com o aviso e o repete 1 hora depois.
+- Tocar no corpo do aviso abre o app na tela correspondente.
+
+**RF-NT-07 — Configuração e permissão**
+- Em Configurações → Notificações há uma chave geral e uma por tipo de aviso,
+  com os horários do resumo e das pendências e a antecedência das tarefas.
+- O app só pede a permissão do Android quando faz sentido: ao salvar uma
+  tarefa com horário, um hábito com lembrete, ou pela própria tela de
+  configurações. Se negada, a tela mostra o estado e como liberar.
+
+**RF-NT-08 — Coerência**
+- Toda mudança (criar, editar, concluir, excluir, mudar configuração, virar
+  o dia, ação feita pela notificação) reagenda os avisos dos próximos 7 dias.
+- Nenhum aviso fala de item já concluído.
 
 ## Limitações conhecidas
 

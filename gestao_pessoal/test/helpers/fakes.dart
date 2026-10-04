@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gestao_pessoal/core/notifications/notification_scheduler.dart';
 import 'package:gestao_pessoal/core/providers/core_providers.dart';
 import 'package:gestao_pessoal/core/services/haptics_service.dart';
 import 'package:gestao_pessoal/core/services/sound_service.dart';
@@ -9,6 +10,8 @@ import 'package:gestao_pessoal/features/habits/domain/habits_repository.dart';
 import 'package:gestao_pessoal/features/pomodoro/data/prefs_pomodoro_sessions_repository.dart';
 import 'package:gestao_pessoal/features/pomodoro/domain/pomodoro_session_model.dart';
 import 'package:gestao_pessoal/features/pomodoro/domain/pomodoro_sessions_repository.dart';
+import 'package:gestao_pessoal/features/reminders/data/prefs_snoozes_repository.dart';
+import 'package:gestao_pessoal/features/reminders/domain/reminder.dart';
 import 'package:gestao_pessoal/features/settings/data/prefs_settings_repository.dart';
 import 'package:gestao_pessoal/features/settings/domain/app_settings.dart';
 import 'package:gestao_pessoal/features/settings/domain/settings_repository.dart';
@@ -69,6 +72,40 @@ class InMemorySessionsRepository implements PomodoroSessionsRepository {
       saved = [...sessions];
 }
 
+class InMemorySnoozesRepository implements ReminderSnoozesRepository {
+  List<ReminderSnooze> saved = [];
+
+  @override
+  List<ReminderSnooze> loadAll() => [...saved];
+
+  @override
+  Future<void> saveAll(List<ReminderSnooze> snoozes) async =>
+      saved = [...snoozes];
+}
+
+/// Avisos em memória: registra o que seria agendado no aparelho.
+class FakeNotificationScheduler implements NotificationScheduler {
+  List<ScheduledNotification> plan = [];
+  DateTime? focusEndsAt;
+  bool permitted = true;
+
+  @override
+  Future<void> replaceAll(List<ScheduledNotification> plan) async =>
+      this.plan = [...plan];
+
+  @override
+  Future<void> scheduleFocusEnd(DateTime at) async => focusEndsAt = at;
+
+  @override
+  Future<void> cancelFocusEnd() async => focusEndsAt = null;
+
+  @override
+  Future<bool> requestPermission() async => permitted;
+
+  @override
+  Future<bool> isPermitted() async => permitted;
+}
+
 /// Som silencioso: não cria AudioPlayer (sem plugin nativo no teste).
 class SilentSound implements SoundService {
   @override
@@ -116,6 +153,7 @@ List<Override> testOverrides({
   FakeClock? clock,
   SoundService? sound,
   FakeWakelock? wakelock,
+  FakeNotificationScheduler? notifications,
 }) {
   return [
     tasksRepositoryProvider.overrideWithValue(tasks ?? InMemoryTasksRepository()),
@@ -125,10 +163,13 @@ List<Override> testOverrides({
         .overrideWithValue(settings ?? InMemorySettingsRepository()),
     pomodoroSessionsRepositoryProvider
         .overrideWithValue(sessions ?? InMemorySessionsRepository()),
+    snoozesRepositoryProvider.overrideWithValue(InMemorySnoozesRepository()),
     todayProvider.overrideWithValue(today),
     hapticsServiceProvider.overrideWithValue(HapticsService(enabled: false)),
     soundServiceProvider.overrideWithValue(sound ?? SilentSound()),
     wakelockServiceProvider.overrideWithValue(wakelock ?? FakeWakelock()),
+    notificationSchedulerProvider
+        .overrideWithValue(notifications ?? FakeNotificationScheduler()),
     clockProvider.overrideWithValue((clock ?? FakeClock(today)).call),
   ];
 }

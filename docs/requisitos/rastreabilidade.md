@@ -45,6 +45,14 @@ Caminhos relativos a `gestao_pessoal/`. Testes: **U** = unitário,
 | RF-CF-05 | `AppSettings.pomodoro*Color` · `PomodoroTimerView` | M | 07 | ✅ |
 | RF-CF-06 | `SettingsNotifier.resetDefaults` | M | 07 | ✅ |
 
+| RF-NT-01/02 | `ReminderPlanner.plan` (resumo e pendências) | U `reminder_planner_test` "resumo e pendências" | — | ⬜ aguarda aparelho |
+| RF-NT-03 | `ReminderPlanner.plan` (tarefas) · `LocalNotificationScheduler` | U `reminder_planner_test` "tarefas com horário" | 04 | ⬜ aguarda aparelho |
+| RF-NT-04 | `ReminderPlanner.plan` (hábitos) | U `reminder_planner_test` "hábitos" | 03 | ⬜ aguarda aparelho |
+| RF-NT-05 | `PomodoroTimerNotifier.start` → `scheduleFocusEnd` | U `pomodoro_controller_test` "aviso de fim do foco" | 05 | ⬜ aguarda aparelho |
+| RF-NT-06 | `handleNotificationAction` · `TaskSchedule.markDone` · `ExternalChangesSync` | U `task_schedule_test` (markDone), `reminder_planner_test` (adiar) | 03, 04 | ⬜ aguarda aparelho |
+| RF-NT-07 | `NotificationSettings` · `NotificationSettingsCard` · `askNotificationPermissionOnce` | U `notification_settings_test` | 07 | ⬜ aguarda aparelho |
+| RF-NT-08 | `reminderSyncProvider` · `syncRemindersFromStore` | U `reminder_planner_test` (concluída não avisa) | — | ⬜ aguarda aparelho |
+
 Requisitos ⬜ sem código ainda (RF-HB-05, RF-TD-02, RF-TD-05, RF-TD-08,
 RF-PO-08, RF-ST-04, RF-CF-07) ficam no [backlog](README.md#3-backlog).
 

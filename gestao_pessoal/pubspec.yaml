@@ -36,6 +36,8 @@ dependencies:
 
   # Recursos Nativos e Utilitários
   wakelock_plus: ^1.2.0 # tela acesa durante o timer de foco
+  flutter_local_notifications: ^19.4.0 # avisos locais (ADR 0009)
+  timezone: ^0.10.0 # data do agendamento exigida pelo plugin
   intl: ^0.20.2
 
   # Audio (som de conclusão de tarefa)

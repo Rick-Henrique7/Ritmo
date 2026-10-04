@@ -6,6 +6,7 @@ import 'core/constants/app_theme.dart';
 import 'features/settings/data/settings_controller.dart';
 import 'routing/app_router.dart';
 import 'shell/day_rollover.dart';
+import 'shell/external_changes_sync.dart';
 
 class DailyFlowApp extends ConsumerWidget {
   const DailyFlowApp({super.key});
@@ -21,23 +22,25 @@ class DailyFlowApp extends ConsumerWidget {
       accentColorHex: settings.accentColor,
     );
     return DayRollover(
-      child: MaterialApp.router(
-        title: 'Daily Flow',
-        debugShowCheckedModeBanner: false,
-        theme: theme,
-        darkTheme: theme,
-        themeMode: settings.style.isGlass ? ThemeMode.dark : ThemeMode.light,
-        routerConfig: AppRouter.config,
-        locale: const Locale('pt', 'BR'),
-        supportedLocales: const [
-          Locale('pt', 'BR'),
-          Locale('en', 'US'),
-        ],
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
+      child: ExternalChangesSync(
+        child: MaterialApp.router(
+          title: 'Daily Flow',
+          debugShowCheckedModeBanner: false,
+          theme: theme,
+          darkTheme: theme,
+          themeMode: settings.style.isGlass ? ThemeMode.dark : ThemeMode.light,
+          routerConfig: AppRouter.config,
+          locale: const Locale('pt', 'BR'),
+          supportedLocales: const [
+            Locale('pt', 'BR'),
+            Locale('en', 'US'),
+          ],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+        ),
       ),
     );
   }

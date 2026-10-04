@@ -30,7 +30,7 @@ lib/
 ├── main.dart              # composition root: abre o armazenamento e liga as dependências
 ├── app.dart               # MaterialApp + tema por estilo visual
 ├── routing/app_router.dart
-├── shell/                 # casca do app: AppShell + fundo animado (pode ler features)
+├── shell/                 # casca do app: AppShell, fundo, virada do dia, sincronização externa
 ├── core/
 │   ├── constants/         # AppPalette (ThemeExtension), AppStyle, AppTheme, espaçamentos
 │   ├── database/          # PrefsStore (wrapper do SharedPreferences) + chaves
@@ -44,6 +44,7 @@ lib/
     ├── pomodoro/          # domain: PomodoroSessionModel, PomodoroCycle, PomodoroSessionsRepository
     ├── settings/          # domain: AppSettings, SettingsRepository
     ├── stats/             # domain: StatsCalculator  (feature agregadora)
+    ├── reminders/         # domain: ReminderPlanner  (agregadora: avisos de tarefas e hábitos)
     └── dashboard/         # tela Hoje                 (feature agregadora)
 ```
 
@@ -186,7 +187,30 @@ Componentes que só precisam da cor de destaque leem
 configurações ([ADR 0008](adr/0008-shell-fora-do-core.md)). Detalhes visuais em
 [`design.md`](design.md).
 
-## 9. Dívidas conhecidas (próximas etapas)
+## 9. Notificações
+
+Os avisos são calculados por uma função pura, `ReminderPlanner`, a partir de
+tarefas, hábitos e configurações, e **reagendados inteiros a cada mudança**
+pelo `reminderSyncProvider` ([ADR 0009](adr/0009-notificacoes-locais.md)).
+Os botões Concluir e Adiar rodam num isolate separado e avisam o app aberto
+por uma porta (`ExternalChangesSync`), que relê o armazenamento.
+
+```mermaid
+sequenceDiagram
+  participant A as App (isolate principal)
+  participant P as ReminderPlanner
+  participant S as Android
+  participant B as Isolate da ação
+  A->>P: tarefas, hábitos, configurações mudaram
+  P-->>A: avisos dos próximos 7 dias
+  A->>S: substitui os avisos pendentes
+  S-->>B: usuário toca "Concluir"
+  B->>B: grava a conclusão e reagenda
+  B-->>A: "dados mudaram" (porta)
+  A->>A: relê o armazenamento
+```
+
+## 10. Dívidas conhecidas (próximas etapas)
 
 Resolvidas na [etapa 3](refatoracao/etapa-3-clean-code.md): paleta global,
 telas grandes, timer que atrasava, `core/` importando features e

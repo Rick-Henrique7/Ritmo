@@ -119,6 +119,25 @@ void main() {
     });
   });
 
+  group('TaskSchedule.markDone (ação Concluir)', () {
+    test('pontual fica concluída; repetir não desfaz', () {
+      final done = TaskSchedule.markDone(task(dueDate: thu), thu, thu);
+      expect(done.isCompleted, isTrue);
+      expect(TaskSchedule.markDone(done, thu, thu).isCompleted, isTrue);
+    });
+
+    test('recorrente ganha a conclusão só daquele dia', () {
+      final t = task(repeatDays: const [4, 5]);
+      final done = TaskSchedule.markDone(t, thu, thu);
+      expect(done.isCompletedOn(thu), isTrue);
+      expect(done.isCompletedOn(fri), isFalse);
+      expect(
+        TaskSchedule.markDone(done, thu, thu).completedDates,
+        hasLength(1),
+      );
+    });
+  });
+
   group('TaskSchedule.isOverdue', () {
     test('pontual de dia anterior, aberta, está atrasada', () {
       expect(TaskSchedule.isOverdue(task(dueDate: wed), thu), isTrue);

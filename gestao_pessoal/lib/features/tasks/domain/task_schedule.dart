@@ -41,6 +41,21 @@ abstract final class TaskSchedule {
         dateOnly(due).isBefore(dateOnly(day));
   }
 
+  /// Marca como feita no [day], sem alternar: se já estiver feita, devolve
+  /// igual. Usado pela ação "Concluir" da notificação, que pode chegar duas
+  /// vezes (toque duplo) e não deve desfazer a conclusão.
+  static TaskModel markDone(TaskModel t, DateTime day, DateTime now) {
+    if (t.isRepeating) {
+      if (t.isCompletedOn(day)) return t;
+      return t.copyWith(
+        completedDates: [...t.completedDates, dateOnly(day)],
+        completedAt: now,
+      );
+    }
+    if (t.isCompleted) return t;
+    return t.copyWith(isCompleted: true, completedAt: now);
+  }
+
   /// Tarefas do dia [day] — pendentes, atrasadas **e** as já feitas naquele
   /// dia. Alimenta o painel "Hoje no radar" e o progresso "Feitos hoje".
   ///

@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../database/prefs_store.dart';
-import '../utils/date_only.dart';
+import '../notifications/notification_scheduler.dart';
 import '../services/haptics_service.dart';
 import '../services/sound_service.dart';
 import '../services/wakelock_service.dart';
+import '../utils/date_only.dart';
 
 /// Providers de infraestrutura compartilhados por todas as features.
 ///
@@ -52,6 +53,16 @@ final soundServiceProvider = Provider<SoundService>((ref) {
   ref.onDispose(service.dispose);
   return service;
 });
+
+/// Avisos do sistema. Padrão sem efeito (testes); o `main.dart` liga a
+/// implementação com o plugin de notificações.
+final notificationSchedulerProvider = Provider<NotificationScheduler>(
+  (ref) => const NoopNotificationScheduler(),
+);
+
+/// O usuário quer o aviso de fim do foco? "Porta" como a
+/// [FeedbackPreferences]: o `main.dart` liga às configurações.
+final focusAlertEnabledProvider = Provider<bool>((ref) => true);
 
 /// Mantém a tela acesa durante o timer de foco.
 final wakelockServiceProvider = Provider<WakelockService>(

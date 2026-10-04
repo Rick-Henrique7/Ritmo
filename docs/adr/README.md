@@ -14,5 +14,6 @@ aceitos — se a decisão mudar, um novo ADR o substitui.
 | [0006](0006-paleta-como-theme-extension.md) | Paleta como `ThemeExtension` lida por `context.palette` | Aceito |
 | [0007](0007-timer-pelo-horario-de-termino.md) | Timer de foco pelo horário de término e relógio injetável | Aceito |
 | [0008](0008-shell-fora-do-core.md) | Casca do app (`shell/`) fora do `core/` | Aceito |
+| [0009](0009-notificacoes-locais.md) | Notificações locais reagendadas a partir do estado | Aceito |
 
 Modelo: [`template.md`](template.md).
