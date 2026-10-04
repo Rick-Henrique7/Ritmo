@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="gestao_pessoal/assets/icons/ritmo_icon.png" alt="Ícone do Ritmo" width="112">
+<img src="gestao_pessoal/assets/icons/ritmo_icon.png" style="border-radius:20px" alt="Ícone do Ritmo" width="112">
 
 # Ritmo
 
