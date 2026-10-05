@@ -9,7 +9,7 @@ publish_to: 'none'
 # - Bump MINOR em features novas retrocompatíveis
 # - Bump PATCH em bugfixes
 # - BUILD incrementa a cada release publicado (Play Store, CI)
-version: 0.1.0+1
+version: 0.1.0+2
 
 environment:
   sdk: ^3.11.5

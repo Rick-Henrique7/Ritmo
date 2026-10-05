@@ -45,6 +45,9 @@ class _HabitFormDialogState extends ConsumerState<HabitFormDialog> {
   int? _durationMinutes;
   late final Set<int> _frequency;
 
+  /// Mostra o motivo quando "Criar" é tocado sem nome ou sem dias.
+  String? _error;
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +60,9 @@ class _HabitFormDialogState extends ConsumerState<HabitFormDialog> {
     _colorHex = e?.colorHex ?? '#4F8A83';
     _reminder = e?.reminderTime;
     _durationMinutes = e?.durationMinutes;
-    _frequency = {...?e?.frequencyDays};
+    // Hábito novo começa todos os dias: sem nenhum dia marcado ele seria
+    // salvo mas nunca apareceria em Hoje nem no calendário.
+    _frequency = e != null ? {...e.frequencyDays} : {1, 2, 3, 4, 5, 6, 7};
   }
 
   /// Paleta de cores dos hábitos — tons terrosos/editoriais que
@@ -163,7 +168,15 @@ class _HabitFormDialogState extends ConsumerState<HabitFormDialog> {
   }
 
   Future<void> _submit() async {
-    if (_titleCtrl.text.trim().isEmpty) return;
+    final error = _titleCtrl.text.trim().isEmpty
+        ? 'Dê um nome ao hábito.'
+        : _frequency.isEmpty
+            ? 'Escolha pelo menos um dia da semana.'
+            : null;
+    if (error != null) {
+      setState(() => _error = error);
+      return;
+    }
     final notifier = ref.read(habitsProvider.notifier);
     final category = _categoryCtrl.text.trim().isEmpty
         ? 'Geral'
@@ -461,6 +474,7 @@ class _HabitFormDialogState extends ConsumerState<HabitFormDialog> {
                 selected: _frequency,
                 onToggle: (day) => setState(() {
                   if (!_frequency.remove(day)) _frequency.add(day);
+                  _error = null;
                 }),
               ),
               const SizedBox(height: 16),
@@ -482,6 +496,14 @@ class _HabitFormDialogState extends ConsumerState<HabitFormDialog> {
                 ),
               ),
               const SizedBox(height: 8),
+              if (_error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    _error!,
+                    style: TextStyle(color: context.accent, fontSize: 13),
+                  ),
+                ),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
