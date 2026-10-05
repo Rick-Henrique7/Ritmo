@@ -41,6 +41,9 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
   TimeOfDay? _dueTime;
   late final Set<int> _repeatDays;
 
+  /// Aparece quando "Criar" é tocado sem nome (antes nada acontecia).
+  bool _missingTitle = false;
+
   static DateTime _todayMidnight() {
     final n = DateTime.now();
     return DateTime(n.year, n.month, n.day);
@@ -85,7 +88,10 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
   }
 
   Future<void> _submit() async {
-    if (_titleCtrl.text.trim().isEmpty) return;
+    if (_titleCtrl.text.trim().isEmpty) {
+      setState(() => _missingTitle = true);
+      return;
+    }
     final category = _categoryCtrl.text.trim();
     final notifier = ref.read(tasksProvider.notifier);
 
@@ -257,6 +263,14 @@ class _TaskFormDialogState extends ConsumerState<TaskFormDialog> {
                 }),
               ),
               const SizedBox(height: 20),
+              if (_missingTitle)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    'Dê um nome à tarefa.',
+                    style: TextStyle(color: context.accent, fontSize: 13),
+                  ),
+                ),
 
               // Ações
               Row(

@@ -95,9 +95,7 @@ class _AnimatedBackgroundState extends ConsumerState<AnimatedBackground>
     return Stack(
       children: [
         Positioned.fill(child: RepaintBoundary(child: backdrop)),
-        // Um só "retrato" do fundo para todos os cartões de vidro desfocarem
-        // (BackdropFilter.grouped), em vez de um por cartão.
-        RepaintBoundary(child: BackdropGroup(child: widget.child)),
+        RepaintBoundary(child: widget.child),
       ],
     );
   }

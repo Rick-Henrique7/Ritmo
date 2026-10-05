@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gestao_pessoal/app.dart';
+import 'package:gestao_pessoal/features/habits/presentation/habit_form_dialog.dart';
 import 'package:gestao_pessoal/routing/app_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
@@ -128,5 +129,63 @@ void main() {
     expect(find.text('Estilo visual'), findsOneWidget);
     expect(find.text('Editorial'), findsOneWidget);
     expect(find.text('Liquid Glass'), findsOneWidget);
+  });
+
+  Future<void> openNewHabitForm(WidgetTester tester) async {
+    await tester.tap(find.byTooltip('Hábitos'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Novo hábito'));
+    await tester.pumpAndSettle();
+  }
+
+  Finder inHabitForm(Finder f) =>
+      find.descendant(of: find.byType(HabitFormDialog), matching: f);
+
+  Future<void> tapCreate(WidgetTester tester) async {
+    // Fecha o teclado antes, como a pessoa faz ao terminar de digitar.
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    final create = inHabitForm(find.widgetWithText(FilledButton, 'Criar'));
+    await tester.ensureVisible(create);
+    await tester.pumpAndSettle();
+    await tester.tap(create);
+    await tester.pumpAndSettle();
+  }
+
+  // Regressão: o hábito novo começava sem nenhum dia marcado, era salvo,
+  // mas não aparecia em Hoje nem no calendário — parecia não ter sido criado.
+  testWidgets('Hábitos: hábito novo vem com todos os dias e aparece no dia',
+      (tester) async {
+    await pumpApp(tester);
+    await openNewHabitForm(tester);
+
+    await tester.enterText(
+      inHabitForm(find.byType(TextField)).first,
+      'Ler 10 páginas',
+    );
+    await tapCreate(tester);
+
+    expect(find.byType(HabitFormDialog), findsNothing);
+    await tester.scrollUntilVisible(
+      find.text('Ler 10 páginas'),
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(find.text('Ler 10 páginas'), findsOneWidget);
+  });
+
+  testWidgets('Hábitos: Criar sem nome explica o que falta', (tester) async {
+    await pumpApp(tester);
+    await openNewHabitForm(tester);
+
+    await tapCreate(tester);
+
+    expect(find.byType(HabitFormDialog), findsOneWidget);
+    expect(find.text('Dê um nome ao hábito.'), findsOneWidget);
   });
 }

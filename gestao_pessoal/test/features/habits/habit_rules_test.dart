@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:gestao_pessoal/features/habits/domain/habit_model.dart';
 import 'package:gestao_pessoal/features/habits/domain/habit_rules.dart';
 
 import '../../helpers/fixtures.dart';
@@ -54,5 +55,13 @@ void main() {
     test('sem hábitos não há dias incompletos', () {
       expect(HabitCalendar.incompleteDays([], thu), isEmpty);
     });
+  });
+
+  // Regressão: hábitos criados sem nenhum dia (0.1.0+1) ficavam invisíveis.
+  test('hábito salvo sem dias volta como todos os dias', () {
+    final json = habit().toJson()..['frequencyDays'] = <int>[];
+    final migrated = HabitModel.fromJson(json);
+    expect(migrated.frequencyDays, [1, 2, 3, 4, 5, 6, 7]);
+    expect(migrated.isScheduledFor(thu), isTrue);
   });
 }

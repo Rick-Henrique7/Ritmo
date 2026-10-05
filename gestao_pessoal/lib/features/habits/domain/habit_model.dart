@@ -140,14 +140,17 @@ class HabitModel {
     // Migração: documentos antigos usavam `iconCodePoint`.
     final iconKey = (json['iconKey'] as String?) ?? 'water';
     final duration = json['durationMinutes'];
+    // Migração: até a 0.1.0+1 o formulário deixava criar hábito sem nenhum
+    // dia marcado — ele ficava salvo mas invisível. Esses voltam como
+    // "todos os dias", para aparecerem e poderem ser editados.
+    final days = (json['frequencyDays'] as List<dynamic>).cast<int>().toList();
     return HabitModel(
       id: json['id'] as String,
       title: json['title'] as String,
       category: json['category'] as String,
       iconKey: iconKey,
       colorHex: json['colorHex'] as String,
-      frequencyDays:
-          (json['frequencyDays'] as List<dynamic>).cast<int>().toList(),
+      frequencyDays: days.isEmpty ? const [1, 2, 3, 4, 5, 6, 7] : days,
       targetValue: json['targetValue'] as int,
       unit: json['unit'] as String,
       completedDates: (json['completedDates'] as List<dynamic>)

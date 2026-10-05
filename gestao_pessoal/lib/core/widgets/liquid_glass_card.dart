@@ -1,5 +1,3 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
@@ -10,8 +8,8 @@ import '../constants/app_colors.dart';
 ///   tinta, cantos generosos. Com [panel] = `true` vira um painel
 ///   grafite (como os blocos escuros de revista) — use [context.palette.onPanel]
 ///   para o texto dentro dele.
-/// - **Liquid Glass**: vidro fosco (`BackdropFilter`), preenchimento
-///   translúcido, borda com reflexo de luz e sombra suave.
+/// - **Liquid Glass**: preenchimento translúcido sobre o fundo de manchas,
+///   borda com reflexo de luz e sombra suave.
 ///
 /// O nome foi mantido por compatibilidade com o código das telas.
 class LiquidGlassCard extends StatelessWidget {
@@ -64,52 +62,46 @@ class LiquidGlassCard extends StatelessWidget {
 
   Widget _glass(BorderRadius radius) {
     final fillAlpha = switch (intensity) {
-      GlassIntensity.subtle => 0.05,
-      GlassIntensity.standard => 0.09,
-      GlassIntensity.strong => 0.14,
+      GlassIntensity.subtle => 0.06,
+      GlassIntensity.standard => 0.11,
+      GlassIntensity.strong => 0.16,
     };
+    // Sem BackdropFilter: o que fica atrás dos cartões é só o fundo de
+    // manchas em degradê (ou uma cor lisa), que desfocado fica igual. O
+    // desfoque refeito a cada quadro do fundo animado era o que travava o
+    // Liquid Glass; o vidro fosco real ficou só na barra de navegação,
+    // por onde o conteúdo passa por baixo.
     return RepaintBoundary(
-      child: DecoratedBox(
+      child: Container(
+        padding: padding,
+        // Mantém o conteúdo dentro dos cantos arredondados, como o
+        // ClipRRect fazia antes.
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: radius,
+          gradient: gradient ??
+              LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withValues(
+                      alpha: fillAlpha + (panel ? 0.10 : 0.04)),
+                  Colors.white.withValues(alpha: fillAlpha * 0.6),
+                ],
+              ),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: panel ? 0.32 : 0.2),
+            width: 1,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.22),
-              blurRadius: 18,
-              offset: const Offset(0, 10),
+              color: Colors.black.withValues(alpha: 0.18),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: radius,
-          // `grouped`: todos os cartões desfocam o mesmo retrato do fundo
-          // (ver BackdropGroup no AnimatedBackground). Desfoque 12 já dá o
-          // efeito fosco com bem menos custo que 18.
-          child: BackdropFilter.grouped(
-            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-            child: Container(
-              padding: padding,
-              decoration: BoxDecoration(
-                borderRadius: radius,
-                gradient: gradient ??
-                    LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withValues(
-                            alpha: fillAlpha + (panel ? 0.10 : 0.04)),
-                        Colors.white.withValues(alpha: fillAlpha * 0.6),
-                      ],
-                    ),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: panel ? 0.32 : 0.2),
-                  width: 1,
-                ),
-              ),
-              child: child,
-            ),
-          ),
-        ),
+        child: child,
       ),
     );
   }
