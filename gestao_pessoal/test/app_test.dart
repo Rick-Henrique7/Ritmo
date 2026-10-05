@@ -142,7 +142,10 @@ void main() {
       find.descendant(of: find.byType(HabitFormDialog), matching: f);
 
   Future<void> tapCreate(WidgetTester tester) async {
-    final create = inHabitForm(find.text('Criar'));
+    // Fecha o teclado antes, como a pessoa faz ao terminar de digitar.
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pumpAndSettle();
+    final create = inHabitForm(find.widgetWithText(FilledButton, 'Criar'));
     await tester.ensureVisible(create);
     await tester.pumpAndSettle();
     await tester.tap(create);

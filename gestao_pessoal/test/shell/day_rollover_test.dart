@@ -29,9 +29,25 @@ void main() {
     expect(find.text('dia 2'), findsOneWidget);
 
     // App minimizado durante a noite; o celular dorme e acorda no dia 3.
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    // O Flutter exige a sequência real de estados (não pula de paused para
+    // resumed): resumed → inactive → hidden → paused e o caminho de volta.
+    void goTo(List<AppLifecycleState> states) {
+      for (final s in states) {
+        tester.binding.handleAppLifecycleStateChanged(s);
+      }
+    }
+
+    goTo(const [
+      AppLifecycleState.inactive,
+      AppLifecycleState.hidden,
+      AppLifecycleState.paused,
+    ]);
     clock.advance(const Duration(hours: 10));
-    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    goTo(const [
+      AppLifecycleState.hidden,
+      AppLifecycleState.inactive,
+      AppLifecycleState.resumed,
+    ]);
     await tester.pump();
 
     expect(find.text('dia 3'), findsOneWidget);
